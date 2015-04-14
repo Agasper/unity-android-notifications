@@ -12,6 +12,8 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.os.Build;
+import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
 //import com.unity3d.player.UnityPlayerNativeActivity;
@@ -21,11 +23,11 @@ public class UnityNotificationManager extends BroadcastReceiver
 
 	public static void SetNotification(int id, String unityClass, long delay, String title, String message, String ticker, int sound, int vibrate, int lights)
 	{
-		SetNotification(id, unityClass, delay, title, message, ticker, sound, vibrate, lights, "notify_icon_big", "notify_icon_small");
+		SetNotification(id, unityClass, delay, title, message, ticker, sound, vibrate, lights, "notify_icon_big", "notify_icon_small", 11167436);
 	}
 
     public static void SetNotification(int id, String unityClass, long delay, String title, String message, String ticker, int sound, int vibrate, 
-            int lights, String largeIconResource, String smallIconResource)
+            int lights, String largeIconResource, String smallIconResource, int bgColor)
     {
         Activity currentActivity = UnityPlayer.currentActivity;
         AlarmManager am = (AlarmManager)currentActivity.getSystemService(Context.ALARM_SERVICE);
@@ -34,6 +36,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         intent.putExtra("title", title);
         intent.putExtra("message", message);
         intent.putExtra("id", id);
+        intent.putExtra("color", bgColor);
         intent.putExtra("sound", sound == 1);
         intent.putExtra("vibrate", vibrate == 1);
         intent.putExtra("lights", lights == 1);
@@ -43,7 +46,8 @@ public class UnityNotificationManager extends BroadcastReceiver
         am.set(0, System.currentTimeMillis() + delay, PendingIntent.getBroadcast(currentActivity, id, intent, 0));
     }
     
-    public static void SetRepeatingNotification(int id, String unityClass, long delay, String title, String message, String ticker, long rep, int sound, int vibrate, int lights)
+    public static void SetRepeatingNotification(int id, String unityClass, long delay, String title, String message, String ticker, long rep, int sound, int vibrate, int lights, 
+    		String largeIconResource, String smallIconResource, int bgColor)
     {
     	Activity currentActivity = UnityPlayer.currentActivity;
         AlarmManager am = (AlarmManager)currentActivity.getSystemService(Context.ALARM_SERVICE);
@@ -52,11 +56,12 @@ public class UnityNotificationManager extends BroadcastReceiver
         intent.putExtra("title", title);
         intent.putExtra("message", message);
         intent.putExtra("id", id);
+        intent.putExtra("color", bgColor);
         intent.putExtra("sound", sound == 1);
         intent.putExtra("vibrate", vibrate == 1);
         intent.putExtra("lights", lights == 1);
-        intent.putExtra("l_icon", "notify_icon_big");
-        intent.putExtra("s_icon", "notify_icon_small ");
+        intent.putExtra("l_icon", largeIconResource);
+        intent.putExtra("s_icon", smallIconResource);
         intent.putExtra("unityClass", unityClass);
         am.setRepeating(0, System.currentTimeMillis() + delay, rep, PendingIntent.getBroadcast(currentActivity, id, intent, 0));
     }
@@ -71,6 +76,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         String message = intent.getStringExtra("message");
         String s_icon = intent.getStringExtra("s_icon");
         String l_icon = intent.getStringExtra("l_icon");
+        int color = intent.getIntExtra("color", 0);
         Boolean sound = Boolean.valueOf(intent.getBooleanExtra("sound", false));
         Boolean vibrate = Boolean.valueOf(intent.getBooleanExtra("vibrate", false));
         Boolean lights = Boolean.valueOf(intent.getBooleanExtra("lights", false));
@@ -85,13 +91,16 @@ public class UnityNotificationManager extends BroadcastReceiver
 		}
         Intent notificationIntent = new Intent(context, unityClassActivity);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
-        android.app.Notification.Builder builder = new android.app.Notification.Builder(context);
+        Notification.Builder builder = new Notification.Builder(context);
         
         builder.setContentIntent(contentIntent)
         	.setWhen(System.currentTimeMillis())
         	.setAutoCancel(true)
         	.setContentTitle(title)
         	.setContentText(message);
+        
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+        	builder.setColor(color);
         
         if(ticker != null && ticker.length() > 0)
             builder.setTicker(ticker);

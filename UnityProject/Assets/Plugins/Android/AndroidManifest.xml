@@ -6,7 +6,8 @@
 	android:theme="@android:style/Theme.NoTitleBar"
     android:versionCode="1"
     android:versionName="1.0">
-	<uses-sdk android:targetSdkVersion="19" android:minSdkVersion="14" />
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-sdk android:targetSdkVersion="22" android:minSdkVersion="15" />
     <supports-screens
         android:smallScreens="true"
         android:normalScreens="true"
