@@ -5,7 +5,8 @@ Features:
 * Set delayed notification
 * Set delayed repeatable notification
 * Supports custom icon and large icon
-* Fully supports Android 6.0
+* Fully supports Unity 4.x, 5.x
+* Fully supports Android 4.0.3 - 6.0
 
 ### FAQ
 
@@ -17,7 +18,7 @@ It's not recommended by Google since notifications are batching when phone in ID
 
 Just put it into drawable directories *\UnityProject\Assets\Plugins\Android\res\* with name *notify_icon_big.png*. And in the SendNotification method set bigIcon to *"notify_icon_big"*
 
-**How to get rid of obsolete warnings like "*OBSOLETE - Providing Android resources in Assets/Plugins/Android/res is deprecated, please move your resources to an Android Library. See "Building Plugins for Android" section of the Manual.*"**
+**How to get rid of obsolete warnings like "*OBSOLETE - Providing Android resources in Assets/Plugins/Android/res is deprecated, please move your resources to an Android Library. See "Building Plugins for Android" section of the Manual.*" ?**
 
 You can avoid this by recompiling plugin with icons inside.
 
