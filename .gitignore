@@ -3,3 +3,8 @@ obj/
 Library/
 Temp/
 *.meta
+.vs
+UnityVS
+*.sou
+*.sln
+*.csproj
