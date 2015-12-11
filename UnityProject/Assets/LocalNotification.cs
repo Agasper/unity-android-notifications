@@ -23,7 +23,7 @@ class LocalNotification
     private static string mainActivityClassName = "com.unity3d.player.UnityPlayerNativeActivity";
 #endif
 
-    public static void SendNotification(int id, TimeSpan delay, string title, string message, string icon_name)
+    public static void SendNotification(int id, TimeSpan delay, string title, string message)
     {
         SendNotification(id, (int)delay.TotalSeconds, title, message, Color.white);
     }
