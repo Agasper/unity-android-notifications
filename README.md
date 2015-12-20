@@ -24,7 +24,7 @@ You can avoid this by recompiling plugin with icons inside.
 
 **I got application crash**
 
-Check you don't call CancelNotification and SetNotification in one frame, and you put notify_icon_small into the res directory.
+Check you don't call CancelNotification and SetNotification in one frame, and you put notify_icon_small into the res directory. Be sure you generate unique id for every new notification.
 
 ### Screenshot
 ![Screenshot](https://github.com/Agasper/unity-android-notifications/blob/master/screenshot.png?raw=true "Screenshot")
