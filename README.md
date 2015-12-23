@@ -26,5 +26,11 @@ You can avoid this by recompiling plugin with icons inside.
 
 Check you don't call CancelNotification and SetNotification in one frame, and you put notify_icon_small into the res directory. Be sure you generate unique id for every new notification.
 
+**Notification doesn't launch the app**
+
+Set LocalNotification.mainActivityClassName to the your main activity class (from manifest)
+
+
+
 ### Screenshot
 ![Screenshot](https://github.com/Agasper/unity-android-notifications/blob/master/screenshot.png?raw=true "Screenshot")
