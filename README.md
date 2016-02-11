@@ -5,8 +5,8 @@ Features:
 * Set delayed notification
 * Set delayed repeatable notification
 * Supports custom icon and large icon
-* Fully supports Unity 4.1 - 6.x
-* Fully supports Android 4.0.3 - 6.0
+* Fully supports Unity 4.х - 5.х
+* Fully supports Android 4.1 - 6.0
 
 ### FAQ
 
