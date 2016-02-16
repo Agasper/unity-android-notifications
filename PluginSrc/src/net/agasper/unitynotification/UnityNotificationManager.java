@@ -82,13 +82,13 @@ public class UnityNotificationManager extends BroadcastReceiver
         String l_icon = intent.getStringExtra("l_icon");
         int color = intent.getIntExtra("color", 0);
         String unityClass = intent.getStringExtra("activity");
-        Boolean sound = Boolean.valueOf(intent.getBooleanExtra("sound", false));
-        Boolean vibrate = Boolean.valueOf(intent.getBooleanExtra("vibrate", false));
-        Boolean lights = Boolean.valueOf(intent.getBooleanExtra("lights", false));
+        Boolean sound = intent.getBooleanExtra("sound", false);
+        Boolean vibrate = intent.getBooleanExtra("vibrate", false);
+        Boolean lights = intent.getBooleanExtra("lights", false);
         int id = intent.getIntExtra("id", 0);
-               
+
         Resources res = context.getResources();
-        
+
         Class<?> unityClassActivity = null;
 		try 
 		{
@@ -119,16 +119,16 @@ public class UnityNotificationManager extends BroadcastReceiver
 		
 		if (l_icon != null && l_icon.length() > 0)
 			builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(l_icon, "drawable", context.getPackageName())));
-		
-        if(sound.booleanValue())
+
+        if(sound)
             builder.setSound(RingtoneManager.getDefaultUri(2));
-        
-        if(vibrate.booleanValue())
+
+        if(vibrate)
             builder.setVibrate(new long[] {
-                1000L, 1000L
+                    1000L, 1000L
             });
-        
-        if(lights.booleanValue())
+
+        if(lights)
             builder.setLights(Color.GREEN, 3000, 3000);
         
         Notification notification = builder.build();
