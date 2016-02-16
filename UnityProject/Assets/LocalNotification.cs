@@ -59,4 +59,13 @@ class LocalNotification
         }
 #endif
     }
+
+    public static void CancelAllNotifications()
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        if (pluginClass != null)
+            pluginClass.CallStatic("CancelAll");
+#endif
+    }
 }
