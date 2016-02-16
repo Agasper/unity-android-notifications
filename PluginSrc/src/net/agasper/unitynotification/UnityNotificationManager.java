@@ -143,4 +143,9 @@ public class UnityNotificationManager extends BroadcastReceiver
         PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, id, intent, 0);
         am.cancel(pendingIntent);
     }
+
+    public static void CancelAll(){
+        NotificationManager notificationManager = (NotificationManager)UnityPlayer.currentActivity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+    }
 }
