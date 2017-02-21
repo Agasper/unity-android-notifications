@@ -13,10 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.Build;
-import android.util.Log;
-
 import com.unity3d.player.UnityPlayer;
-//import com.unity3d.player.UnityPlayerNativeActivity;
 
 public class UnityNotificationManager extends BroadcastReceiver
 {

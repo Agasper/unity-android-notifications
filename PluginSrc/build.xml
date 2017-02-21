@@ -1,0 +1,7 @@
+<?xml version="1.0" ?>
+<!-- Configuration of the Ant build system to generate a Jar file --> 
+<project name="UnityNotification" default="CreateJar">
+  <target name="CreateJar" description="Create Jar file">
+        <zip destfile="../UnityProject/Assets/Plugins/Android/LocalNotifications/libs/unitynotification.jar" basedir="bin/classes" includes="**/*.class" />
+  </target>
+</project>
