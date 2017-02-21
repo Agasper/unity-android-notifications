@@ -1,71 +1,190 @@
-﻿using UnityEngine;
-using System.Collections;
-using System.Collections.Generic;
+﻿#define FORCE_LOCAL_NOTIFICATIONS
+
+#if (UNITY_ANDROID && !UNITY_EDITOR) || FORCE_LOCAL_NOTIFICATIONS
+#define USE_LOCAL_NOTIFICATIONS
+#endif
+
+using UnityEngine;
 using System;
 
-class LocalNotification
+namespace Net.Agasper.UnityNotifications
 {
-    /// <summary>
-    /// Inexact uses `set` method
-    /// Exact uses `setExact` method
-    /// ExactAndAllowWhileIdle uses `setAndAllowWhileIdle` method
-    /// Documentation: https://developer.android.com/intl/ru/reference/android/app/AlarmManager.html
-    /// </summary>
-    public enum NotificationExecuteMode
+    class LocalNotification
     {
-        Inexact = 0,
-        Exact = 1,
-        ExactAndAllowWhileIdle = 2
-    }
+        public static readonly Color32 noColor = new Color32(0, 0, 0, 0);
 
-#if UNITY_ANDROID && !UNITY_EDITOR
-    private static string fullClassName = "net.agasper.unitynotification.UnityNotificationManager";
-    private static string mainActivityClassName = "com.unity3d.player.UnityPlayerNativeActivity";
-#endif
-
-    public static void SendNotification(int id, TimeSpan delay, string title, string message)
-    {
-        SendNotification(id, (int)delay.TotalSeconds, title, message, Color.white);
-    }
-    
-    public static void SendNotification(int id, long delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", NotificationExecuteMode executeMode = NotificationExecuteMode.Inexact)
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-        if (pluginClass != null)
+        /// <summary>
+        /// Mode of scheduling notification to Android Alarm Manager.
+        /// 
+        /// Exact uses `setExact` method (API 19+, Android 4.4 or higher) or 'setExactAndAllowWhileIdle' method (API 23+, Android 6.0 or higher). Inexact alternatives will be used on older Android versions.
+        /// AllowWhileIdle uses `setAndAllowWhileIdle` method or `setExactAndAllowWhileIdle` method (API 23+, Android 6.0 or higher). Normal versions will be used on older Android versions.
+        /// 
+        /// Documentation: https://developer.android.com/intl/ru/reference/android/app/AlarmManager.html
+        /// </summary>
+        [Flags]
+        public enum ScheduleMode
         {
-            pluginClass.CallStatic("SetNotification", id, delay * 1000L, title, message, message, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, (int)executeMode, mainActivityClassName);
+            None = 0,
+            Exact = 1,
+            AllowWhileIdle = 2,
         }
-#endif
-    }
 
-    public static void SendRepeatingNotification(int id, long delay, long timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-        if (pluginClass != null)
+#if USE_LOCAL_NOTIFICATIONS
+        private static string fullClassName = "net.agasper.unitynotification.UnityNotificationManager";
+#endif
+
+        public static void SendNotification
+            ( int id
+            , DateTime when
+            , string title
+            , string message
+            , Color32 bgColor
+            , Color32 lightsColor
+            , string group = null
+            , bool cancelPrevious = false
+            , bool showTime = true
+            , bool sound = true
+            , bool vibrate = true
+            , int lightsOnMs = 1000
+            , int lightsOffMs = 3000
+            , string smallIcon = "notify_icon_small"
+            , string bigIcon = ""
+            , ScheduleMode scheduleMode = ScheduleMode.None)
         {
-            pluginClass.CallStatic("SetRepeatingNotification", id, delay * 1000L, title, message, message, timeout * 1000, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, mainActivityClassName);
-        }
+#if USE_LOCAL_NOTIFICATIONS
+            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+            if (pluginClass != null)
+            {
+                long timeDeltaMs = (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
+                if (timeDeltaMs >= 0)
+                {
+                    pluginClass.CallStatic
+                        ( "SetNotification"
+                        , id
+                        , group
+                        , timeDeltaMs
+                        , title
+                        , message
+                        , message
+                        , 0
+                        , showTime ? 1 : 0
+                        , sound ? 1 : 0
+                        , vibrate ? 1 : 0
+                        , (lightsColor.a << 24) | (lightsColor.r << 16) | (lightsColor.g << 8) | lightsColor.b
+                        , lightsOnMs
+                        , lightsOffMs
+                        , bigIcon
+                        , smallIcon
+                        , (bgColor.a << 24) | (bgColor.r << 16) | (bgColor.g << 8) | bgColor.b
+                        , (int)scheduleMode);
+                }
+                else
+                {
+                    Debug.LogWarningFormat("Passed notification date is in past ({0}), ignored.", when);
+                }
+            }
+            else
+            {
+                ReportNoJavaClass();
+            }
 #endif
-    }
-
-    public static void CancelNotification(int id)
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-        if (pluginClass != null) {
-            pluginClass.CallStatic("CancelNotification", id);
         }
-#endif
-    }
 
-    //public static void CancelAllNotifications()
-    //{
-//#if UNITY_ANDROID && !UNITY_EDITOR
-    //    AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-    //    if (pluginClass != null)
-    //        pluginClass.CallStatic("CancelAll");
-//#endif
-    //}
+        public static void SendRepeatingNotification
+            ( int id
+            , DateTime when
+            , TimeSpan repeatInterval
+            , string title
+            , string message
+            , Color32 bgColor
+            , Color32 lightsColor
+            , string group = null
+            , bool cancelPrevious = false
+            , bool showTime = true
+            , bool sound = true
+            , bool vibrate = true
+            , int lightsOnMs = 1000
+            , int lightsOffMs = 3000
+            , string smallIcon = "notify_icon_small"
+            , string bigIcon = ""
+            , ScheduleMode scheduleMode = ScheduleMode.None)
+        {
+#if USE_LOCAL_NOTIFICATIONS
+            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+            if (pluginClass != null)
+            {
+                long timeDeltaMs = (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
+                if (timeDeltaMs >= 0)
+                {
+                    pluginClass.CallStatic
+                        ( "SetNotification"
+                        , id
+                        , group
+                        , timeDeltaMs
+                        , title
+                        , message
+                        , message
+                        , (long)repeatInterval.TotalMilliseconds
+                        , showTime ? 1 : 0
+                        , sound ? 1 : 0
+                        , vibrate ? 1 : 0
+                        , (lightsColor.a << 24) | (lightsColor.r << 16) | (lightsColor.g << 8) | lightsColor.b
+                        , lightsOnMs
+                        , lightsOffMs
+                        , bigIcon
+                        , smallIcon
+                        , (bgColor.a << 24) | (bgColor.r << 16) | (bgColor.g << 8) | bgColor.b
+                        , (int)scheduleMode);
+                }
+                else
+                {
+                    Debug.LogWarningFormat("Passed notification date is in past ({0}), ignored.", when);
+                }
+            }
+            else
+            {
+                ReportNoJavaClass();
+            }
+#endif
+        }
+
+        public static void CancelNotification (string id, bool cancelPending = true, bool cancelShown = true)
+        {
+#if USE_LOCAL_NOTIFICATIONS
+            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+            if (pluginClass != null)
+            {
+                pluginClass.CallStatic
+                    ("CancelNotification"
+                    , id
+                    , cancelPending ? 1 : 0
+                    , cancelShown ? 1 : 0);
+            }
+            else
+            {
+                ReportNoJavaClass();
+            }
+#endif
+        }
+
+        public static void CancelAllShownNotifications ()
+        {
+#if USE_LOCAL_NOTIFICATIONS
+            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+            if (pluginClass != null)
+            {
+                pluginClass.CallStatic("CancelAllShownNotifications");
+            }
+            else
+            {
+                ReportNoJavaClass();
+            }
+#endif
+        }
+
+        private static void ReportNoJavaClass ()
+        {
+            Debug.LogErrorFormat("There's no Java class with a name '{0}' in a project. Local notifications will not work.", fullClassName);
+        }
+    }
 }

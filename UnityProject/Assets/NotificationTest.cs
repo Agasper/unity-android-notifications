@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class NotificationTest : MonoBehaviour {
-
+public class NotificationTest : MonoBehaviour
+{
     float sleepUntil = 0;
-	
-	void OnGUI () {
+
+    void OnGUI ()
+    {
+/*
         //Color is supported only in Android >= 5.0
         GUI.enabled = sleepUntil < Time.time;
 
@@ -37,8 +38,9 @@ public class NotificationTest : MonoBehaviour {
 
         if (GUILayout.Button("STOP", GUILayout.Height(Screen.height * 0.2f)))
         {
-            LocalNotification.CancelNotification(1);
+            LocalNotification.kCancelNotification(1);
             sleepUntil = 0;
         }
-	}
+*/
+    }
 }
