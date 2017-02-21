@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="net.agasper.unitynotification">
+	<uses-permission android:name="android.permission.VIBRATE" />
+	<uses-sdk android:minSdkVersion="15" />
+    <application>
+		<receiver android:name="net.agasper.unitynotification.UnityNotificationManager"></receiver>
+    </application>
+</manifest>
