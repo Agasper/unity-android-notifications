@@ -6,13 +6,119 @@
 
 using UnityEngine;
 using System;
+using UnityEngine.Assertions;
 
 namespace Net.Agasper.UnityNotifications
 {
+    public class NotificationData
+    {
+        public static readonly Color32 noColor = new Color32(0, 0, 0, 0); // Means: no explicit color to set.
+
+        public string   title               { get; private set; }
+        public string   message             { get; private set; }
+        public string   ticker              { get; private set; }
+
+        public string   group               { get; private set; }
+
+        public bool     showTime            { get; private set; }
+        public bool     sound               { get; private set; }
+
+        public Color32  color               { get; private set; }
+
+        public int[]    vibrationPattern    { get; private set; }
+
+        public Color32  lightsColor         { get; private set; }
+        public int      lightsOn            { get; private set; } // In milliseconds.
+        public int      lightsOff           { get; private set; } // In milliseconds.
+
+        public string   smallIconResource   { get; private set; }
+        public string   largeIconResource   { get; private set; }
+
+        public NotificationData (string title, string message)
+        {
+            this.title = title;
+            this.message = message;
+            this.group = null;
+            this.showTime = true;
+            this.sound = true;
+            this.color = noColor;
+            this.vibrationPattern = null;
+            this.lightsColor = noColor;
+            this.lightsOn = 1000;
+            this.lightsOff = 3000;
+            this.smallIconResource = "notify_icon_small";
+            this.largeIconResource = null;
+        }
+
+        public NotificationData SetTicker(string ticker)
+        {
+            this.ticker = ticker;
+            return this;
+        }
+
+        public NotificationData SetGroup(string group)
+        {
+            this.group = group;
+            return this;
+        }
+
+        public NotificationData SetShowTime(bool showTime)
+        {
+            this.showTime = showTime;
+            return this;
+        }
+
+        public NotificationData SetSound(bool sound)
+        {
+            this.sound = sound;
+            return this;
+        }
+
+        public NotificationData SetColor(Color32 color)
+        {
+            this.color = color;
+            return this;
+        }
+
+        public NotificationData SetVibrationPattern(int[] vibrationPattern)
+        {
+            this.vibrationPattern = vibrationPattern;
+            return this;
+        }
+
+        public NotificationData SetLightsColor(Color32 lightsColor)
+        {
+            this.lightsColor = lightsColor;
+            return this;
+        }
+
+        public NotificationData SetLightsOn(int lightsOn)
+        {
+            this.lightsOn = lightsOn;
+            return this;
+        }
+
+        public NotificationData SetLightsOff(int lightsOff)
+        {
+            this.lightsOff = lightsOff;
+            return this;
+        }
+
+        public NotificationData SetSmallIconResource(string smallIconResource)
+        {
+            this.smallIconResource = smallIconResource;
+            return this;
+        }
+
+        public NotificationData SetLargeIconResource(string largeIconResource)
+        {
+            this.largeIconResource = largeIconResource;
+            return this;
+        }
+    }
+
     class LocalNotification
     {
-        public static readonly Color32 noColor = new Color32(0, 0, 0, 0);
-
         /// <summary>
         /// Mode of scheduling notification to Android Alarm Manager.
         /// 
@@ -30,120 +136,61 @@ namespace Net.Agasper.UnityNotifications
         }
 
 #if USE_LOCAL_NOTIFICATIONS
-        private static string fullClassName = "net.agasper.unitynotification.UnityNotificationManager";
+        private static string managerClassName = "net.agasper.unitynotification.UnityNotificationManager";
+        private static string notificationDataClassName = "net.agasper.unitynotification.NotificationData";
 #endif
 
         public static void SendNotification
-            ( int id
+            ( string id
             , DateTime when
-            , string title
-            , string message
-            , Color32 bgColor
-            , Color32 lightsColor
-            , string group = null
+            , NotificationData data
             , bool cancelPrevious = false
-            , bool showTime = true
-            , bool sound = true
-            , long[] vibrationPattern = null
-            , int lightsOnMs = 1000
-            , int lightsOffMs = 3000
-            , string smallIcon = "notify_icon_small"
-            , string bigIcon = ""
             , ScheduleMode scheduleMode = ScheduleMode.None)
         {
-#if USE_LOCAL_NOTIFICATIONS
-            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-            if (pluginClass != null)
-            {
-                long timeDeltaMs = (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
-                if (timeDeltaMs >= 0)
-                {
-                    pluginClass.CallStatic
-                        ( "SetNotification"
-                        , id
-                        , group
-                        , timeDeltaMs
-                        , title
-                        , message
-                        , message
-                        , 0
-                        , showTime ? 1 : 0
-                        , sound ? 1 : 0
-                        , vibrationPattern
-                        , (lightsColor.a << 24) | (lightsColor.r << 16) | (lightsColor.g << 8) | lightsColor.b
-                        , lightsOnMs
-                        , lightsOffMs
-                        , bigIcon
-                        , smallIcon
-                        , (bgColor.a << 24) | (bgColor.r << 16) | (bgColor.g << 8) | bgColor.b
-                        , (int)scheduleMode);
-                }
-                else
-                {
-                    Debug.LogWarningFormat("Passed notification date is in past ({0}), ignored.", when);
-                }
-            }
-            else
-            {
-                ReportNoJavaClass();
-            }
-#endif
+            SendNotification (id, when, TimeSpan.Zero, data, cancelPrevious, scheduleMode);
         }
 
-        public static void SendRepeatingNotification
-            ( int id
+        public static void SendNotification
+            ( string id
             , DateTime when
             , TimeSpan repeatInterval
-            , string title
-            , string message
-            , Color32 bgColor
-            , Color32 lightsColor
-            , string group = null
+            , NotificationData data
             , bool cancelPrevious = false
-            , bool showTime = true
-            , bool sound = true
-            , long[] vibrationPattern = null
-            , int lightsOnMs = 1000
-            , int lightsOffMs = 3000
-            , string smallIcon = "notify_icon_small"
-            , string bigIcon = ""
             , ScheduleMode scheduleMode = ScheduleMode.None)
         {
+            Assert.IsNotNull(id);
+            Assert.IsTrue(id.Length > 0);
+            Assert.IsNotNull(data);
+
 #if USE_LOCAL_NOTIFICATIONS
-            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-            if (pluginClass != null)
+            AndroidJavaClass pluginClass = new AndroidJavaClass(managerClassName);
+            if (pluginClass == null)
             {
-                long timeDeltaMs = (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
-                if (timeDeltaMs >= 0)
-                {
+                ReportNoJavaClass(managerClassName);
+                return;
+            }
+
+            AndroidJavaObject dataObject = PrepareNotificationData(data);
+            if (dataObject == null)
+            {
+                return;
+            }
+
+            long timeDeltaMs = (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
+            if (timeDeltaMs >= 0)
+            {
                     pluginClass.CallStatic
                         ( "SetNotification"
                         , id
-                        , group
                         , timeDeltaMs
-                        , title
-                        , message
-                        , message
-                        , (long)repeatInterval.TotalMilliseconds
-                        , showTime ? 1 : 0
-                        , sound ? 1 : 0
-                        , vibrationPattern
-                        , (lightsColor.a << 24) | (lightsColor.r << 16) | (lightsColor.g << 8) | lightsColor.b
-                        , lightsOnMs
-                        , lightsOffMs
-                        , bigIcon
-                        , smallIcon
-                        , (bgColor.a << 24) | (bgColor.r << 16) | (bgColor.g << 8) | bgColor.b
+                        , (repeatInterval != TimeSpan.Zero) ? (long)repeatInterval.TotalMilliseconds : 0
+                        , cancelPrevious
+                        , dataObject
                         , (int)scheduleMode);
-                }
-                else
-                {
-                    Debug.LogWarningFormat("Passed notification date is in past ({0}), ignored.", when);
-                }
             }
             else
             {
-                ReportNoJavaClass();
+                Debug.LogWarningFormat("Passed notification date is in past ({0}), ignored.", when);
             }
 #endif
         }
@@ -151,7 +198,7 @@ namespace Net.Agasper.UnityNotifications
         public static void CancelNotification (string id, bool cancelPending = true, bool cancelShown = true)
         {
 #if USE_LOCAL_NOTIFICATIONS
-            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+            AndroidJavaClass pluginClass = new AndroidJavaClass(managerClassName);
             if (pluginClass != null)
             {
                 pluginClass.CallStatic
@@ -162,7 +209,7 @@ namespace Net.Agasper.UnityNotifications
             }
             else
             {
-                ReportNoJavaClass();
+                ReportNoJavaClass(managerClassName);
             }
 #endif
         }
@@ -170,21 +217,56 @@ namespace Net.Agasper.UnityNotifications
         public static void CancelAllShownNotifications ()
         {
 #if USE_LOCAL_NOTIFICATIONS
-            AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+            AndroidJavaClass pluginClass = new AndroidJavaClass(managerClassName);
             if (pluginClass != null)
             {
                 pluginClass.CallStatic("CancelAllShownNotifications");
             }
             else
             {
-                ReportNoJavaClass();
+                ReportNoJavaClass(managerClassName);
             }
 #endif
         }
 
-        private static void ReportNoJavaClass ()
+#if USE_LOCAL_NOTIFICATIONS
+        private static void ReportNoJavaClass (string className)
         {
-            Debug.LogErrorFormat("There's no Java class with a name '{0}' in a project. Local notifications will not work.", fullClassName);
+            Debug.LogErrorFormat("There's no Java class with a name '{0}' in a project. Local notifications will not work.", className);
         }
+
+        private static AndroidJavaObject PrepareNotificationData (NotificationData data)
+        {
+            AndroidJavaObject dataObject = new AndroidJavaObject(notificationDataClassName);
+            if (dataObject != null)
+            {
+                dataObject.Set("title", data.title);
+                dataObject.Set("message", data.message);
+                dataObject.Set("ticker", data.ticker);
+
+                dataObject.Set("group", data.group);
+
+                dataObject.Set("showTime", data.showTime);
+                dataObject.Set("sound", data.sound);
+
+                dataObject.Set("color", (data.color.a << 24) | (data.color.r << 16) | (data.color.g << 8) | data.color.b);
+
+                if (data.vibrationPattern != null)
+                    dataObject.Call("SetVibrationPattern", data.vibrationPattern);
+
+                dataObject.Set("lightsColor", (data.lightsColor.a << 24) | (data.lightsColor.r << 16) | (data.lightsColor.g << 8) | data.lightsColor.b);
+                dataObject.Set("lightsOn", data.lightsOn);
+                dataObject.Set("lightsOff", data.lightsOff);
+
+                dataObject.Set("smallIconResource", data.smallIconResource);
+                dataObject.Set("largeIconResource", data.largeIconResource);
+            }
+            else
+            {
+                ReportNoJavaClass(notificationDataClassName);
+            }
+            return dataObject;
+        }
+#endif
     }
 }

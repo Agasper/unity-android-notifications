@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+
 import android.support.v4.app.*;
 
 import com.unity3d.player.UnityPlayer;
@@ -26,43 +27,36 @@ public class UnityNotificationManager extends BroadcastReceiver
 	
     public static void SetNotification
     	( String id
-    	, String group
     	, long delayMs
-    	, int cancelPrevious
-    	, String title
-    	, String message
-    	, String ticker
     	, long repeatMs
-    	, int showTime
-    	, int sound
-    	, long[] vibrationPattern
-    	, int lightsColor
-    	, int lightsOn
-    	, int lightsOff
-    	, String largeIconResource
-    	, String smallIconResource
-    	, int bgColor
+    	, boolean cancelPrevious
+    	, NotificationData data
     	, int scheduleMode)
     {
+    	if (id == null || id.length() == 0)
+    	{
+    		Log.e(UnityNotificationManager.class.getSimpleName(), "'id' parameter is null or empty string.");
+    		return;
+    	}
+
+    	if (delayMs <= 0)
+    	{
+    		Log.w(UnityNotificationManager.class.getSimpleName(), "'delayMs' parameter must be greater than 0.");
+    		return;
+    	}
+    	
+    	if (data == null)
+    	{
+    		Log.e(UnityNotificationManager.class.getSimpleName(), "'data' parameter is null.");
+    		return;
+    	}
+    	
         Activity currentActivity = UnityPlayer.currentActivity;
         AlarmManager am = (AlarmManager)currentActivity.getSystemService(Context.ALARM_SERVICE);
         
         Intent intent = BuildAlarmIntent(currentActivity, id);
         intent.putExtra("id", id);
-        intent.putExtra("group", group);
-        intent.putExtra("ticker", ticker);
-        intent.putExtra("title", title);
-        intent.putExtra("message", message);
-        intent.putExtra("color", bgColor);
-        intent.putExtra("showTime", showTime == 1);
-        intent.putExtra("sound", sound == 1);
-        if (vibrationPattern != null)
-        	intent.putExtra("vibrationPattern", vibrationPattern);
-        intent.putExtra("lightsColor", lightsColor);
-        intent.putExtra("lightsOn", lightsOn);
-        intent.putExtra("lightsOff", lightsOff);
-        intent.putExtra("l_icon", largeIconResource);
-        intent.putExtra("s_icon", smallIconResource);
+        intent.putExtra("data", data);
         
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
         {
@@ -74,7 +68,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         	scheduleMode &= (~ScheduleMode_Exact);
         }
         
-        int getIntentFlags = (cancelPrevious == 1) ? PendingIntent.FLAG_CANCEL_CURRENT : 0;
+        int getIntentFlags = (cancelPrevious) ? PendingIntent.FLAG_CANCEL_CURRENT : 0;
         long alarmTime = System.currentTimeMillis() + delayMs;
         
         if (repeatMs > 0)
@@ -147,22 +141,8 @@ public class UnityNotificationManager extends BroadcastReceiver
     	NotificationManager notificationManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 
     	String id = intent.getStringExtra("id");
-    	String group = intent.getStringExtra("group");
+    	NotificationData data = (NotificationData)intent.getSerializableExtra("data");
     	
-        String ticker = intent.getStringExtra("ticker");
-        String title = intent.getStringExtra("title");
-        String message = intent.getStringExtra("message");
-        String s_icon = intent.getStringExtra("s_icon");
-        String l_icon = intent.getStringExtra("l_icon");
-        int color = intent.getIntExtra("color", 0);
-        Boolean showTime = intent.getBooleanExtra("showTime", false);
-        Boolean sound = intent.getBooleanExtra("sound", false);
-        long[] vibrationPattern = intent.getLongArrayExtra("vibrationPattern");
-        
-        int lightsColor = intent.getIntExtra("lightsColor", 0);
-        int lightsOn = intent.getIntExtra("lightsOn", 0);
-        int lightsOff = intent.getIntExtra("lightsOff", 0);
-
         Resources res = context.getResources();
 
         Class<?> unityClassActivity;
@@ -182,34 +162,40 @@ public class UnityNotificationManager extends BroadcastReceiver
         
         builder.setContentIntent(contentIntent)
         	.setWhen(System.currentTimeMillis())
-        	.setShowWhen(showTime)
+        	.setShowWhen(data.showTime)
         	.setAutoCancel(true)
-        	.setContentTitle(title)
-        	.setContentText(message);
+        	.setContentTitle(data.title)
+        	.setContentText(data.message);
         
-        if (group != null && group.length() > 0)
-        	builder.setGroup(group);
+        if (data.group != null && data.group.length() > 0)
+        	builder.setGroup(data.group);
         
-        if (color != 0)
-        	builder.setColor(color);
+        if (data.color != 0)
+        	builder.setColor(data.color);
         
-        if (ticker != null && ticker.length() > 0)
-            builder.setTicker(ticker);
+        if (data.ticker != null && data.ticker.length() > 0)
+            builder.setTicker(data.ticker);
                
-		if (s_icon != null && s_icon.length() > 0)
-			builder.setSmallIcon(res.getIdentifier(s_icon, "drawable", context.getPackageName()));
+		if (data.smallIconResource != null && data.smallIconResource.length() > 0)
+			builder.setSmallIcon(res.getIdentifier(data.smallIconResource, "drawable", context.getPackageName()));
 		
-		if (l_icon != null && l_icon.length() > 0)
-			builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(l_icon, "drawable", context.getPackageName())));
+		if (data.largeIconResource != null && data.largeIconResource.length() > 0)
+			builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(data.largeIconResource, "drawable", context.getPackageName())));
 
-        if (sound)
+        if (data.sound)
             builder.setSound(RingtoneManager.getDefaultUri(2));
 
-        if (vibrationPattern != null)
-            builder.setVibrate(vibrationPattern);
+        if (data.vibrationPattern != null)
+        {
+        	long[] tmpArray = new long[data.vibrationPattern.length];
+        	for (int i = 0; i < data.vibrationPattern.length; i++)
+        		tmpArray[i] = data.vibrationPattern[i];
+        	
+            builder.setVibrate(tmpArray);
+        }
 
-        if (lightsColor != 0 && lightsOn > 0 && lightsOff > 0)
-            builder.setLights(lightsColor, lightsOn, lightsOff);
+        if (data.lightsColor != 0 && data.lightsOn > 0 && data.lightsOff > 0)
+            builder.setLights(data.lightsColor, data.lightsOn, data.lightsOff);
         
 		Notification notification = builder.build();
         notificationManager.notify(id, 0, notification);
