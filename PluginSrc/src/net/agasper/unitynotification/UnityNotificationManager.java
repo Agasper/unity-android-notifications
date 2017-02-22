@@ -14,6 +14,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
+import android.support.v4.app.*;
 
 import com.unity3d.player.UnityPlayer;
 
@@ -176,7 +177,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         Intent notificationIntent = new Intent(context, unityClassActivity);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
         
-        Notification.Builder builder = new Notification.Builder(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         
         builder.setContentIntent(contentIntent)
         	.setWhen(System.currentTimeMillis())
@@ -188,7 +189,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         if (group != null && group.length() > 0)
         	builder.setGroup(group);
         
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && color != 0)
+        if (color != 0)
         	builder.setColor(color);
         
         if (ticker != null && ticker.length() > 0)
@@ -209,7 +210,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         if (lightsColor != 0 && lightsOn > 0 && lightsOff > 0)
             builder.setLights(lightsColor, lightsOn, lightsOff);
         
-        Notification notification = builder.build();
+		Notification notification = builder.build();
         notificationManager.notify(id, 0, notification);
     }
     
