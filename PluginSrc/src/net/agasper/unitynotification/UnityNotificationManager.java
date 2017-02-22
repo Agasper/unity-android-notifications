@@ -35,7 +35,7 @@ public class UnityNotificationManager extends BroadcastReceiver
     	, long repeatMs
     	, int showTime
     	, int sound
-    	, int vibrate
+    	, long[] vibrationPattern
     	, int lightsColor
     	, int lightsOn
     	, int lightsOff
@@ -56,7 +56,8 @@ public class UnityNotificationManager extends BroadcastReceiver
         intent.putExtra("color", bgColor);
         intent.putExtra("showTime", showTime == 1);
         intent.putExtra("sound", sound == 1);
-        intent.putExtra("vibrate", vibrate == 1);
+        if (vibrationPattern != null)
+        	intent.putExtra("vibrationPattern", vibrationPattern);
         intent.putExtra("lightsColor", lightsColor);
         intent.putExtra("lightsOn", lightsOn);
         intent.putExtra("lightsOff", lightsOff);
@@ -156,7 +157,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         int color = intent.getIntExtra("color", 0);
         Boolean showTime = intent.getBooleanExtra("showTime", false);
         Boolean sound = intent.getBooleanExtra("sound", false);
-        Boolean vibrate = intent.getBooleanExtra("vibrate", false);
+        long[] vibrationPattern = intent.getLongArrayExtra("vibrationPattern");
         
         int lightsColor = intent.getIntExtra("lightsColor", 0);
         int lightsOn = intent.getIntExtra("lightsOn", 0);
@@ -204,8 +205,8 @@ public class UnityNotificationManager extends BroadcastReceiver
         if (sound)
             builder.setSound(RingtoneManager.getDefaultUri(2));
 
-        if (vibrate)
-            builder.setVibrate(new long[] { 1000L, 1000L });
+        if (vibrationPattern != null)
+            builder.setVibrate(vibrationPattern);
 
         if (lightsColor != 0 && lightsOn > 0 && lightsOff > 0)
             builder.setLights(lightsColor, lightsOn, lightsOff);

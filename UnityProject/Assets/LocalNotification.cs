@@ -44,7 +44,7 @@ namespace Net.Agasper.UnityNotifications
             , bool cancelPrevious = false
             , bool showTime = true
             , bool sound = true
-            , bool vibrate = true
+            , long[] vibrationPattern = null
             , int lightsOnMs = 1000
             , int lightsOffMs = 3000
             , string smallIcon = "notify_icon_small"
@@ -69,7 +69,7 @@ namespace Net.Agasper.UnityNotifications
                         , 0
                         , showTime ? 1 : 0
                         , sound ? 1 : 0
-                        , vibrate ? 1 : 0
+                        , vibrationPattern
                         , (lightsColor.a << 24) | (lightsColor.r << 16) | (lightsColor.g << 8) | lightsColor.b
                         , lightsOnMs
                         , lightsOffMs
@@ -102,7 +102,7 @@ namespace Net.Agasper.UnityNotifications
             , bool cancelPrevious = false
             , bool showTime = true
             , bool sound = true
-            , bool vibrate = true
+            , long[] vibrationPattern = null
             , int lightsOnMs = 1000
             , int lightsOffMs = 3000
             , string smallIcon = "notify_icon_small"
@@ -127,7 +127,7 @@ namespace Net.Agasper.UnityNotifications
                         , (long)repeatInterval.TotalMilliseconds
                         , showTime ? 1 : 0
                         , sound ? 1 : 0
-                        , vibrate ? 1 : 0
+                        , vibrationPattern
                         , (lightsColor.a << 24) | (lightsColor.r << 16) | (lightsColor.g << 8) | lightsColor.b
                         , lightsOnMs
                         , lightsOffMs
