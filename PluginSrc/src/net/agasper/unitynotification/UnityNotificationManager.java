@@ -161,14 +161,40 @@ public class UnityNotificationManager extends BroadcastReceiver
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         
         builder.setContentIntent(contentIntent)
-        	.setWhen(System.currentTimeMillis())
-        	.setShowWhen(data.showTime)
-        	.setAutoCancel(true)
+        	.setShowWhen(data.showWhen)
+        	.setAutoCancel(data.autoCancel)
         	.setContentTitle(data.title)
-        	.setContentText(data.message);
+        	.setContentText(data.message)
+        	.setLocalOnly(data.localOnly)
+        	.setOngoing(data.ongoing)
+        	.setOnlyAlertOnce(data.onlyAlertOnce)
+        	.setPriority(data.priority);
         
+        if (data.subText != null && data.subText.length() > 0)
+        {
+        	builder.setSubText(data.subText);
+        }
+        else if (data.progressMax > 0)
+        {
+        	builder.setProgress(data.progressMax, data.progress, data.progressIndeterminate);
+        }
+        
+        if (data.useCustomWhen)
+        	builder.setWhen(data.customWhen);
+        else
+        	builder.setWhen(System.currentTimeMillis());
+        	
         if (data.group != null && data.group.length() > 0)
+        {
+        	builder.setGroupSummary(data.isGroupSummary);
         	builder.setGroup(data.group);
+        }
+        
+        builder.setUsesChronometer(data.whenIsChronometer);
+        
+        // A bit of hackery: EXTRA_CHRONOMETER_COUNT_DOWN is a relatively new feature (API 24+) and it doesn't have explicit function in NotificationCompat.Builder yet.
+        if (data.chronometerCountdown)
+        	builder.getExtras().putBoolean("android.chronometerCountDown", data.chronometerCountdown);
         
         if (data.color != 0)
         	builder.setColor(data.color);
@@ -196,6 +222,31 @@ public class UnityNotificationManager extends BroadcastReceiver
 
         if (data.lightsColor != 0 && data.lightsOn > 0 && data.lightsOff > 0)
             builder.setLights(data.lightsColor, data.lightsOn, data.lightsOff);
+        
+        if (data.person != null && data.person.length() > 0)
+        	builder.addPerson(data.person);
+        
+        if (data.category != NotificationData.CATEGORY_NONE)
+        {
+        	switch (data.category)
+        	{
+        		case NotificationData.CATEGORY_ALARM: 			builder.setCategory(Notification.CATEGORY_ALARM); break;
+        		case NotificationData.CATEGORY_CALL: 			builder.setCategory(Notification.CATEGORY_CALL); break;
+        		case NotificationData.CATEGORY_EMAIL: 			builder.setCategory(Notification.CATEGORY_EMAIL); break;
+        		case NotificationData.CATEGORY_ERROR: 			builder.setCategory(Notification.CATEGORY_ERROR); break;
+        		case NotificationData.CATEGORY_EVENT: 			builder.setCategory(Notification.CATEGORY_EVENT); break;
+        		case NotificationData.CATEGORY_MESSAGE: 		builder.setCategory(Notification.CATEGORY_MESSAGE); break;
+        		case NotificationData.CATEGORY_PROGRESS: 		builder.setCategory(Notification.CATEGORY_PROGRESS); break;
+        		case NotificationData.CATEGORY_PROMO: 			builder.setCategory(Notification.CATEGORY_PROMO); break;
+        		case NotificationData.CATEGORY_RECOMMENDATION: 	builder.setCategory(Notification.CATEGORY_RECOMMENDATION); break;
+        		case NotificationData.CATEGORY_REMINDER: 		builder.setCategory(Notification.CATEGORY_REMINDER); break;
+        		case NotificationData.CATEGORY_SERVICE: 		builder.setCategory(Notification.CATEGORY_SERVICE); break;
+        		case NotificationData.CATEGORY_SOCIAL: 			builder.setCategory(Notification.CATEGORY_SOCIAL); break;
+        		case NotificationData.CATEGORY_STATUS: 			builder.setCategory(Notification.CATEGORY_STATUS); break;
+        		case NotificationData.CATEGORY_SYSTEM: 			builder.setCategory(Notification.CATEGORY_SYSTEM); break;
+        		case NotificationData.CATEGORY_TRANSPORT: 		builder.setCategory(Notification.CATEGORY_TRANSPORT); break; 
+        	}
+        }
         
 		Notification notification = builder.build();
         notificationManager.notify(id, 0, notification);

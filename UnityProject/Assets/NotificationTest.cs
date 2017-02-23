@@ -19,16 +19,9 @@ public class NotificationTest : MonoBehaviour
     private float delay = 5.0f;
     private float repeat = 0.0f;
     private bool useTicker = false;
-    private Color32 bgColor = Net.Agasper.UnityNotifications.NotificationData.noColor;
-    private string group = null;
-    private bool showTime = true;
-    private bool sound = true;
-    private int[] vibrationPattern = null;
-    private Color32 lightsColor = Net.Agasper.UnityNotifications.NotificationData.noColor;
-    private int lightTimeOn = 1000;
-    private int lightTimeOff = 1000;
-    private string smallIcon = "notify_icon_small";
-    private string largeIcon = null;
+
+    private Net.Agasper.UnityNotifications.NotificationData data = new Net.Agasper.UnityNotifications.NotificationData(string.Empty, string.Empty);
+
     private bool cancelPrevious = true;
     private bool scheduleModeExact = false;
     private bool scheduleModeAllowWhileIdle = false;
@@ -86,9 +79,9 @@ public class NotificationTest : MonoBehaviour
                 {
                     for (int i = 0; i < groups.Length; i++)
                     {
-                        if (GUILayout.Toggle(group == groups[i], groups[i] != null ? groups[i] : "<None>"))
+                        if (GUILayout.Toggle(data.group == groups[i], groups[i] != null ? groups[i] : "<None>"))
                         {
-                            group = groups[i];
+                            data.SetGroup(groups[i]);
                         }
                     }
                 }
@@ -101,9 +94,9 @@ public class NotificationTest : MonoBehaviour
                 {
                     for (int i = 0; i < colors.Length; i++)
                     {
-                        if (LayoutColoredButton(colors[i], new GUIContent((Color)bgColor == (Color)colors[i] ? " +++++ " : " ----- ")))
+                        if (LayoutColoredButton(colors[i], new GUIContent((Color)data.color == (Color)colors[i] ? " +++++ " : " ----- ")))
                         {
-                            bgColor = colors[i];
+                            data.SetColor(colors[i]);
                         }
                     }
                 }
@@ -116,9 +109,9 @@ public class NotificationTest : MonoBehaviour
                 {
                     for (int i = 0; i < vibrationPatterns.Length; i++)
                     {
-                        if (GUILayout.Toggle(vibrationPattern == vibrationPatterns[i], vibrationPatternNames[i]))
+                        if (GUILayout.Toggle(data.vibrationPattern == vibrationPatterns[i], vibrationPatternNames[i]))
                         {
-                            vibrationPattern = vibrationPatterns[i];
+                            data.SetVibrationPattern(vibrationPatterns[i]);
                         }
                     }
                 }
@@ -135,9 +128,9 @@ public class NotificationTest : MonoBehaviour
 
                         for (int i = 0; i < colors.Length; i++)
                         {
-                            if (LayoutColoredButton(colors[i], new GUIContent((Color)lightsColor == (Color)colors[i] ? " +++++ " : " ----- ")))
+                            if (LayoutColoredButton(colors[i], new GUIContent((Color)data.lightsColor == (Color)colors[i] ? " +++++ " : " ----- ")))
                             {
-                                lightsColor = colors[i];
+                                data.SetLightsColor(colors[i]);
                             }
                         }
                     }
@@ -149,9 +142,9 @@ public class NotificationTest : MonoBehaviour
 
                         for (int i = 0; i < lightTimes.Length; i++)
                         {
-                            if (GUILayout.Toggle(lightTimeOn == lightTimes[i], lightTimes[i].ToString() ))
+                            if (GUILayout.Toggle(data.lightsOn == lightTimes[i], lightTimes[i].ToString() ))
                             {
-                                lightTimeOn = lightTimes[i];
+                                data.SetLightsOn(lightTimes[i]);
                             }
                         }
                     }
@@ -163,9 +156,9 @@ public class NotificationTest : MonoBehaviour
 
                         for (int i = 0; i < lightTimes.Length; i++)
                         {
-                            if (GUILayout.Toggle(lightTimeOff == lightTimes[i], lightTimes[i].ToString() ))
+                            if (GUILayout.Toggle(data.lightsOff == lightTimes[i], lightTimes[i].ToString() ))
                             {
-                                lightTimeOff = lightTimes[i];
+                                data.SetLightsOff(lightTimes[i]);
                             }
                         }
                     }
@@ -184,9 +177,9 @@ public class NotificationTest : MonoBehaviour
 
                         for (int i = 0; i < icons.Length; i++)
                         {
-                            if (GUILayout.Toggle(smallIcon == icons[i], icons[i] != null ? icons[i].ToString() : "<None>" ))
+                            if (GUILayout.Toggle(data.smallIconResource == icons[i], icons[i] != null ? icons[i].ToString() : "<None>" ))
                             {
-                                smallIcon = icons[i];
+                                data.SetSmallIconResource(icons[i]);
                             }
                         }
                     }
@@ -198,9 +191,9 @@ public class NotificationTest : MonoBehaviour
 
                         for (int i = 0; i < icons.Length; i++)
                         {
-                            if (GUILayout.Toggle(largeIcon == icons[i], icons[i] != null ? icons[i].ToString() : "<None>" ))
+                            if (GUILayout.Toggle(data.largeIconResource == icons[i], icons[i] != null ? icons[i].ToString() : "<None>" ))
                             {
-                                largeIcon = icons[i];
+                                data.SetLargeIconResource(icons[i]);
                             }
                         }
                     }
@@ -216,8 +209,34 @@ public class NotificationTest : MonoBehaviour
                 GUILayout.Space(10.0f);
 
                 useTicker = GUILayout.Toggle(useTicker, "Use Ticker");
-                showTime = GUILayout.Toggle(showTime, "Show Time");
-                sound = GUILayout.Toggle(sound, "Sound");
+                data.SetSound(GUILayout.Toggle(data.sound, "Sound"));
+                data.SetAutoCancel(GUILayout.Toggle(data.autoCancel, "Auto Cancel"));
+                data.SetLocalOnly(GUILayout.Toggle(data.localOnly, "Local only notification"));
+                data.SetOngoing(GUILayout.Toggle(data.ongoing, "'Ongoing' notification"));
+                data.SetOnlyAlertOnce(GUILayout.Toggle(data.onlyAlertOnce, "Only Alert Once"));
+
+                GUILayout.Space(10.0f);
+
+                data.SetShowWhen(GUILayout.Toggle(data.showWhen, "Show 'When'"));
+                data.SetWhenIsChronometer(GUILayout.Toggle(data.whenIsChronometer, "'When' is chronometer"));
+                data.SetChronometerCountdown(GUILayout.Toggle(data.chronometerCountdown, "Chronometer countdown"));
+
+                GUILayout.Space(10.0f);
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Progress Max: ");
+                    data.SetProgressMax((int)GUILayout.HorizontalSlider(data.progressMax, 0.0f, 100.0f));
+                }
+                GUILayout.EndHorizontal();
+
+                GUILayout.BeginHorizontal();
+                {
+                    GUILayout.Label("Progress: ");
+                    data.SetProgress((int)GUILayout.HorizontalSlider(data.progress, 0.0f, 100.0f));
+                }
+                GUILayout.EndHorizontal();
+                data.SetProgressIndeterminate(GUILayout.Toggle(data.chronometerCountdown, "Progress indeterminate"));
 
                 GUILayout.Space(10.0f);
 
@@ -236,23 +255,32 @@ public class NotificationTest : MonoBehaviour
                     {
                         var showDate = DateTime.UtcNow + TimeSpan.FromSeconds(delay);
 
-                        var data = new Net.Agasper.UnityNotifications.NotificationData
-                            ( string.Format("Title: {0}", ids[i])
-                            , string.Format("Message: {0} ({1})", ids[i], showDate));
+                        data.SetTitle   (string.Format("Title: {0}", ids[i]));
+                        data.SetMessage (string.Format("Message: {0} ({1})", ids[i], showDate));
 
                         if (useTicker)
                             data.SetTicker(string.Format("Ticker: {0}", ids[i]));
+                        else
+                            data.SetTicker(null);
 
-                        data.SetShowTime(showTime);
-                        data.SetSound(sound);
-                        data.SetColor(bgColor);
+/*
                         data.SetGroup(group);
+
+                        data.SetSound(sound);
+
+                        data.SetShowWhen(showWhen);
+
+                        data.SetColor(bgColor);
+
                         data.SetVibrationPattern(vibrationPattern);
+
                         data.SetLightsColor(lightsColor);
                         data.SetLightsOn(lightTimeOn);
                         data.SetLightsOff(lightTimeOff);
+
                         data.SetSmallIconResource(smallIcon);
                         data.SetLargeIconResource(largeIcon);
+*/
 
                         var scheduleMode = Net.Agasper.UnityNotifications.LocalNotification.ScheduleMode.None;
                         if (scheduleModeExact)

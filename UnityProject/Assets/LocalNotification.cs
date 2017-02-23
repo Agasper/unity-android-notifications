@@ -13,15 +13,62 @@ namespace Net.Agasper.UnityNotifications
     public class NotificationData
     {
         public static readonly Color32 noColor = new Color32(0, 0, 0, 0); // Means: no explicit color to set.
+        public static readonly DateTime noCustomWhen = DateTime.MinValue;
+
+        public enum Category
+        {
+            None            = 0,    // No explicit category. Default.
+            Alarm           = 1,    // Notification category: alarm or timer.
+            Call            = 2,    // Notification category: incoming call (voice or video) or similar synchronous communication request.
+            Email           = 3,    // Notification category: asynchronous bulk message (email).
+            Error           = 4,    // Notification category: error in background operation or authentication status.
+            Event           = 5,    // Notification category: calendar event.
+            Message         = 6,    // Notification category: incoming direct message (SMS, instant message, etc.).
+            Progress        = 7,    // Notification category: progress of a long-running background operation.
+            Promo           = 8,    // Notification category: promotion or advertisement.
+            Recommendation  = 9,    // Notification category: a specific, timely recommendation for a single thing.
+            Reminder        = 10,   // Notification category: user-scheduled reminder.
+            Service         = 11,   // Notification category: indication of running background service.
+            Social          = 12,   // Notification category: social network or sharing update.
+            Status          = 13,   // Notification category: ongoing information about device or contextual status.
+            System          = 14,   // Notification category: system or device status update.
+            Transport       = 15    // Notification category: media transport control for playback. 
+        }
+
+        public enum Priority
+        {
+            Min = -2,
+            Low = -1,
+            Default = 0,
+            High = 1,
+            Max = 2
+        }
 
         public string   title               { get; private set; }
         public string   message             { get; private set; }
         public string   ticker              { get; private set; }
 
-        public string   group               { get; private set; }
+        public string   subText             { get; private set; }
+        public int      progressMax         { get; private set; }
+        public int      progress            { get; private set; }
+        public bool     progressIndeterminate { get; private set; }
 
-        public bool     showTime            { get; private set; }
+        public string   group               { get; private set; }
+        public bool     isGroupSummary      { get; private set; }
+        public Category category            { get; private set; }
+
+        public bool     autoCancel          { get; private set; }
+        public bool     localOnly           { get; private set; }
+        public bool     ongoing             { get; private set; }
+        public bool     onlyAlertOnce       { get; private set; }
+        public Priority priority            { get; private set; }
+
         public bool     sound               { get; private set; }
+
+        public bool     showWhen            { get; private set; }
+        public DateTime customWhen          { get; private set; }
+        public bool     whenIsChronometer   { get; private set; }
+        public bool     chronometerCountdown { get; private set; }
 
         public Color32  color               { get; private set; }
 
@@ -34,25 +81,89 @@ namespace Net.Agasper.UnityNotifications
         public string   smallIconResource   { get; private set; }
         public string   largeIconResource   { get; private set; }
 
+        public string   person              { get; private set; } // Person URI reference.
+
         public NotificationData (string title, string message)
         {
             this.title = title;
             this.message = message;
+            this.ticker = null;
+
+            this.subText = null;
+            this.progressMax = 0;
+            this.progress = 0;
+            this.progressIndeterminate = false;
+
             this.group = null;
-            this.showTime = true;
+            this.isGroupSummary = false;
+            this.category = Category.None;
+
+            this.autoCancel = true;
+            this.localOnly = false;
+            this.ongoing = false;
+            this.onlyAlertOnce = false;
+            this.priority = Priority.Default;
+
             this.sound = true;
+
+            this.showWhen = true;
+            this.customWhen = noCustomWhen;
+            this.whenIsChronometer = false;
+            this.chronometerCountdown = false;
+
             this.color = noColor;
+
             this.vibrationPattern = null;
+
             this.lightsColor = noColor;
             this.lightsOn = 1000;
             this.lightsOff = 3000;
+
             this.smallIconResource = "notify_icon_small";
             this.largeIconResource = null;
+
+            this.person = null;
+        }
+
+        public NotificationData SetTitle(string title)
+        {
+            this.title = title;
+            return this;
+        }
+
+        public NotificationData SetMessage(string message)
+        {
+            this.message = message;
+            return this;
         }
 
         public NotificationData SetTicker(string ticker)
         {
             this.ticker = ticker;
+            return this;
+        }
+
+        public NotificationData SetSubText(string subText)
+        {
+            this.subText = subText;
+            return this;
+        }
+
+        public NotificationData SetProgressMax(int progressMax)
+        {
+            this.progressMax = progressMax;
+            return this;
+        }
+
+        public NotificationData SetProgress(int progress)
+        {
+            this.progress = progress;
+            return this;
+        }
+
+        public NotificationData SetProgressIndeterminate(bool progressIndeterminate)
+        {
+            this.progressIndeterminate = progressIndeterminate;
             return this;
         }
 
@@ -62,15 +173,75 @@ namespace Net.Agasper.UnityNotifications
             return this;
         }
 
-        public NotificationData SetShowTime(bool showTime)
+        public NotificationData SetIsGroupSummary(bool isGroupSummary)
         {
-            this.showTime = showTime;
+            this.isGroupSummary = isGroupSummary;
+            return this;
+        }
+
+        public NotificationData SetCategory(Category category)
+        {
+            this.category = category;
+            return this;
+        }
+
+        public NotificationData SetAutoCancel(bool autoCancel)
+        {
+            this.autoCancel = autoCancel;
+            return this;
+        }
+
+        public NotificationData SetLocalOnly(bool localOnly)
+        {
+            this.localOnly = localOnly;
+            return this;
+        }
+
+        public NotificationData SetOngoing(bool ongoing)
+        {
+            this.ongoing = ongoing;
+            return this;
+        }
+
+        public NotificationData SetOnlyAlertOnce(bool onlyAlertOnce)
+        {
+            this.onlyAlertOnce = onlyAlertOnce;
+            return this;
+        }
+
+        public NotificationData SetPriority(Priority priority)
+        {
+            this.priority = priority;
             return this;
         }
 
         public NotificationData SetSound(bool sound)
         {
             this.sound = sound;
+            return this;
+        }
+
+        public NotificationData SetShowWhen(bool showTime)
+        {
+            this.showWhen = showTime;
+            return this;
+        }
+
+        public NotificationData SetCustomWhen(DateTime customWhen)
+        {
+            this.customWhen = customWhen;
+            return this;
+        }
+
+        public NotificationData SetWhenIsChronometer(bool whenIsChronometer)
+        {
+            this.whenIsChronometer = whenIsChronometer;
+            return this;
+        }
+
+        public NotificationData SetChronometerCountdown(bool chronometerCountdown)
+        {
+            this.chronometerCountdown = chronometerCountdown;
             return this;
         }
 
@@ -113,6 +284,12 @@ namespace Net.Agasper.UnityNotifications
         public NotificationData SetLargeIconResource(string largeIconResource)
         {
             this.largeIconResource = largeIconResource;
+            return this;
+        }
+
+        public NotificationData SetPerson(string person)
+        {
+            this.person = person;
             return this;
         }
     }
@@ -240,26 +417,63 @@ namespace Net.Agasper.UnityNotifications
             AndroidJavaObject dataObject = new AndroidJavaObject(notificationDataClassName);
             if (dataObject != null)
             {
-                dataObject.Set("title", data.title);
-                dataObject.Set("message", data.message);
-                dataObject.Set("ticker", data.ticker);
+                dataObject.Set("title",         data.title);
+                dataObject.Set("message",       data.message);
+                dataObject.Set("ticker",        data.ticker);
 
-                dataObject.Set("group", data.group);
+                if (data.subText != null)
+                {
+                    dataObject.Set("subText",   data.subText);
+                }
+                else if (data.progressMax > 0)
+                {
+                    dataObject.Set("progressMax", data.progressMax);
+                    dataObject.Set("progress",  data.progress);
+                    dataObject.Set("progressIndeterminate", data.progressIndeterminate);
+                }
 
-                dataObject.Set("showTime", data.showTime);
-                dataObject.Set("sound", data.sound);
+                if (data.group != null)
+                {
+                    dataObject.Set("group",         data.group);
+                    dataObject.Set("isGroupSummary", data.isGroupSummary);
+                }
 
-                dataObject.Set("color", (data.color.a << 24) | (data.color.r << 16) | (data.color.g << 8) | data.color.b);
+                dataObject.Set("category",      data.category);
+
+                dataObject.Set("autoCancel",    data.autoCancel);
+                dataObject.Set("localOnly",     data.localOnly);
+                dataObject.Set("ongoing",       data.ongoing);
+                dataObject.Set("onlyAlertOnce", data.onlyAlertOnce);
+                dataObject.Set("priority",      (int)data.priority);
+
+                dataObject.Set("sound",         data.sound);
+
+                dataObject.Set("showWhen",      data.showWhen);
+                if (data.customWhen != NotificationData.noCustomWhen)
+                {
+                    var unixEpochDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+                    var customWhen = Convert.ToInt64((data.customWhen.ToUniversalTime() - unixEpochDate).TotalMilliseconds);
+
+                    dataObject.Set("useCustomWhen", true);
+                    dataObject.Set("customWhen", customWhen);
+                }
+
+                dataObject.Set("whenIsChronometer", data.whenIsChronometer);
+                dataObject.Set("chronometerCountdown", data.chronometerCountdown);
+
+                dataObject.Set("color",         (data.color.a << 24) | (data.color.r << 16) | (data.color.g << 8) | data.color.b);
 
                 if (data.vibrationPattern != null)
                     dataObject.Call("SetVibrationPattern", data.vibrationPattern);
 
-                dataObject.Set("lightsColor", (data.lightsColor.a << 24) | (data.lightsColor.r << 16) | (data.lightsColor.g << 8) | data.lightsColor.b);
-                dataObject.Set("lightsOn", data.lightsOn);
-                dataObject.Set("lightsOff", data.lightsOff);
+                dataObject.Set("lightsColor",   (data.lightsColor.a << 24) | (data.lightsColor.r << 16) | (data.lightsColor.g << 8) | data.lightsColor.b);
+                dataObject.Set("lightsOn",      data.lightsOn);
+                dataObject.Set("lightsOff",     data.lightsOff);
 
                 dataObject.Set("smallIconResource", data.smallIconResource);
                 dataObject.Set("largeIconResource", data.largeIconResource);
+
+                dataObject.Set("person",        data.person);
             }
             else
             {
