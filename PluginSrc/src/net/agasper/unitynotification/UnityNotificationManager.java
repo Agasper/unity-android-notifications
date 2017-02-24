@@ -105,11 +105,13 @@ public class UnityNotificationManager extends BroadcastReceiver
         }
     }
 
-    public static void CancelNotification(String id, int cancelPending, int cancelShown)
+    public static boolean CancelNotification(String id, boolean cancelPending, boolean cancelShown)
     {
+    	boolean anyCanceled = false;
+    	
         Activity currentActivity = UnityPlayer.currentActivity;
         
-        if (cancelPending == 1)
+        if (cancelPending)
         {
 	        AlarmManager am = (AlarmManager)currentActivity.getSystemService(Context.ALARM_SERVICE);
 	        
@@ -120,14 +122,17 @@ public class UnityNotificationManager extends BroadcastReceiver
 	        {
 	            am.cancel(pendingIntent);
 	            pendingIntent.cancel();
+	            anyCanceled = true;
 	        }
         }
 
-        if (cancelShown == 1)
+        if (cancelShown)
         {
         	NotificationManager notificationManager = (NotificationManager)currentActivity.getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         	notificationManager.cancel(id, 0);
         }
+        
+        return anyCanceled;
     }
 
     public static void CancelAllShownNotifications()

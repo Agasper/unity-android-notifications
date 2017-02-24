@@ -93,23 +93,26 @@ namespace Android.LocalNotifications
 #endif
         }
 
-        public static void CancelNotification (string id, bool cancelPending = true, bool cancelShown = true)
+        public static bool CancelNotification (string id, bool cancelPending = true, bool cancelShown = true)
         {
 #if USE_LOCAL_NOTIFICATIONS
             AndroidJavaClass pluginClass = new AndroidJavaClass(managerClassName);
             if (pluginClass != null)
             {
-                pluginClass.CallStatic
+                var anyScheduledCanceled = pluginClass.CallStatic<bool>
                     ("CancelNotification"
                     , id
-                    , cancelPending ? 1 : 0
-                    , cancelShown ? 1 : 0);
+                    , cancelPending
+                    , cancelShown);
+
+                return anyScheduledCanceled;
             }
             else
             {
                 ReportNoJavaClass(managerClassName);
             }
 #endif
+            return false;
         }
 
         public static void CancelAllShownNotifications ()
