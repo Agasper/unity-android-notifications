@@ -12,9 +12,13 @@ namespace Net.Agasper.UnityNotifications
 {
     public class NotificationData
     {
+        #region Static readonly data.
         public static readonly Color32 noColor = new Color32(0, 0, 0, 0); // Means: no explicit color to set.
-        public static readonly DateTime noCustomWhen = DateTime.MinValue;
+        public static readonly long noCustomWhen = long.MinValue;
+        public static readonly DateTime unixEpochDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        #endregion
 
+        #region Types.
         public enum Category
         {
             None            = 0,    // No explicit category. Default.
@@ -43,7 +47,9 @@ namespace Net.Agasper.UnityNotifications
             High = 1,
             Max = 2
         }
+        #endregion
 
+        #region Public properties.
         public string   title               { get; private set; }
         public string   message             { get; private set; }
         public string   ticker              { get; private set; }
@@ -66,7 +72,6 @@ namespace Net.Agasper.UnityNotifications
         public bool     sound               { get; private set; }
 
         public bool     showWhen            { get; private set; }
-        public DateTime customWhen          { get; private set; }
         public bool     whenIsChronometer   { get; private set; }
         public bool     chronometerCountdown { get; private set; }
 
@@ -83,6 +88,31 @@ namespace Net.Agasper.UnityNotifications
 
         public string   person              { get; private set; } // Person URI reference.
 
+        public DateTime customWhenDate
+        {
+            get
+            {
+                return ((customWhen != noCustomWhen)
+                    ? unixEpochDate + TimeSpan.FromMilliseconds(customWhen)
+                    : unixEpochDate);
+            }
+        }
+
+        public long customWhenChronometer
+        {
+            get
+            {
+                return customWhen;
+            }
+        }
+
+        #endregion
+
+        #region Private 
+        public long customWhen              { get; private set; }
+        #endregion
+
+        #region Constructor.
         public NotificationData (string title, string message)
         {
             this.title = title;
@@ -124,7 +154,9 @@ namespace Net.Agasper.UnityNotifications
 
             this.person = null;
         }
+        #endregion
 
+        #region Public API.
         public NotificationData SetTitle(string title)
         {
             this.title = title;
@@ -227,9 +259,17 @@ namespace Net.Agasper.UnityNotifications
             return this;
         }
 
-        public NotificationData SetCustomWhen(DateTime customWhen)
+        public NotificationData SetCustomWhenDate(DateTime customWhen)
         {
-            this.customWhen = customWhen;
+            this.customWhen = Convert.ToInt64((customWhen.ToUniversalTime() - unixEpochDate).TotalMilliseconds);
+            this.whenIsChronometer = false;
+            return this;
+        }
+
+        public NotificationData SetCustomWhenChronometer(long chronometerValue)
+        {
+            this.customWhen = chronometerValue;
+            this.whenIsChronometer = true;
             return this;
         }
 
@@ -292,6 +332,7 @@ namespace Net.Agasper.UnityNotifications
             this.person = person;
             return this;
         }
+        #endregion
     }
 
     class LocalNotification
@@ -451,11 +492,8 @@ namespace Net.Agasper.UnityNotifications
                 dataObject.Set("showWhen",      data.showWhen);
                 if (data.customWhen != NotificationData.noCustomWhen)
                 {
-                    var unixEpochDate = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-                    var customWhen = Convert.ToInt64((data.customWhen.ToUniversalTime() - unixEpochDate).TotalMilliseconds);
-
                     dataObject.Set("useCustomWhen", true);
-                    dataObject.Set("customWhen", customWhen);
+                    dataObject.Set("customWhen", data.customWhen);
                 }
 
                 dataObject.Set("whenIsChronometer", data.whenIsChronometer);

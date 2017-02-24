@@ -196,19 +196,19 @@ MonoBehaviour:
       m_Top: 3
       m_Bottom: 0
     m_Overflow:
-      m_Left: -1
+      m_Left: 0
       m_Right: 0
-      m_Top: -4
+      m_Top: -10
       m_Bottom: 0
     m_Font: {fileID: 0}
     m_FontSize: 30
     m_FontStyle: 0
-    m_Alignment: 0
+    m_Alignment: 3
     m_WordWrap: 0
     m_RichText: 1
-    m_TextClipping: 1
+    m_TextClipping: 0
     m_ImagePosition: 0
-    m_ContentOffset: {x: 0, y: 0}
+    m_ContentOffset: {x: 4, y: 0}
     m_FixedWidth: 0
     m_FixedHeight: 0
     m_StretchWidth: 1
@@ -536,9 +536,9 @@ MonoBehaviour:
       m_Top: -2
       m_Bottom: -3
     m_Font: {fileID: 0}
-    m_FontSize: 0
+    m_FontSize: 35
     m_FontStyle: 0
-    m_Alignment: 0
+    m_Alignment: 3
     m_WordWrap: 0
     m_RichText: 1
     m_TextClipping: 1
