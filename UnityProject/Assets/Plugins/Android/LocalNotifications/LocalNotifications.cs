@@ -1,14 +1,14 @@
 ﻿#define FORCE_LOCAL_NOTIFICATIONS
 
 #if (UNITY_ANDROID && !UNITY_EDITOR) || FORCE_LOCAL_NOTIFICATIONS
-#define USE_LOCAL_NOTIFICATIONS
+    #define USE_LOCAL_NOTIFICATIONS
 #endif
 
 using UnityEngine;
 using System;
 using UnityEngine.Assertions;
 
-namespace Net.Agasper.UnityNotifications
+namespace Android.LocalNotifications
 {
     public class NotificationData
     {
@@ -335,8 +335,9 @@ namespace Net.Agasper.UnityNotifications
         #endregion
     }
 
-    class LocalNotification
+    public class LocalNotification
     {
+        #region Types.
         /// <summary>
         /// Mode of scheduling notification to Android Alarm Manager.
         /// 
@@ -352,12 +353,16 @@ namespace Net.Agasper.UnityNotifications
             Exact = 1,
             AllowWhileIdle = 2,
         }
+        #endregion
 
+        #region Static readonly data.
 #if USE_LOCAL_NOTIFICATIONS
-        private static string managerClassName = "net.agasper.unitynotification.UnityNotificationManager";
-        private static string notificationDataClassName = "net.agasper.unitynotification.NotificationData";
+        private static readonly string managerClassName = "net.agasper.unitynotification.UnityNotificationManager";
+        private static readonly string notificationDataClassName = "net.agasper.unitynotification.NotificationData";
 #endif
+        #endregion
 
+        #region Public static API.
         public static void SendNotification
             ( string id
             , DateTime when
@@ -446,7 +451,9 @@ namespace Net.Agasper.UnityNotifications
             }
 #endif
         }
+        #endregion
 
+        #region Private methods.
 #if USE_LOCAL_NOTIFICATIONS
         private static void ReportNoJavaClass (string className)
         {
@@ -520,5 +527,6 @@ namespace Net.Agasper.UnityNotifications
             return dataObject;
         }
 #endif
+        #endregion
     }
 }

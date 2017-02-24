@@ -1,8 +1,8 @@
 ﻿using System;
 using UnityEngine;
 
-using NotificationData = Net.Agasper.UnityNotifications.NotificationData;
-using LocalNotification = Net.Agasper.UnityNotifications.LocalNotification;
+using NotificationData = Android.LocalNotifications.NotificationData;
+using LocalNotification = Android.LocalNotifications.LocalNotification;
 
 public class NotificationTest : MonoBehaviour
 {
