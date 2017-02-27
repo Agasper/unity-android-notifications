@@ -1,4 +1,4 @@
-﻿using UnifiedNotifications.Extensions;
+﻿using UnifiedNotifications.Extensions.iOS;
 
 namespace UnifiedNotifications.Private.Extensions
 {

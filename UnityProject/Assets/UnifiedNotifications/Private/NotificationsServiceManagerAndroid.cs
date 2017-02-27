@@ -1,8 +1,7 @@
 ﻿#if UNITY_ANDROID
 
 using System;
-using UnifiedNotifications.Extensions;
-using UnityEngine;
+using UnifiedNotifications.Extensions.Android;
 
 namespace UnifiedNotifications.Private
 {
@@ -46,8 +45,6 @@ namespace UnifiedNotifications.Private
                 notificationObject.SetOngoing(androidExtension.ongoing);
                 notificationObject.SetOnlyAlertOnce(androidExtension.onlyAlertOnce);
                 notificationObject.SetPriority((Android.LocalNotifications.NotificationData.Priority)androidExtension.priority);
-
-                notificationObject.SetSound(androidExtension.sound);
 
                 notificationObject.SetShowWhen(androidExtension.showWhen);
                 notificationObject.SetWhenIsChronometer(androidExtension.whenIsChronometer);

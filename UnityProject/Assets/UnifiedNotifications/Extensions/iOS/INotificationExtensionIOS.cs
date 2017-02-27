@@ -1,4 +1,4 @@
-﻿namespace UnifiedNotifications.Extensions
+﻿namespace UnifiedNotifications.Extensions.iOS
 {
     public enum RepeatInterval
     {

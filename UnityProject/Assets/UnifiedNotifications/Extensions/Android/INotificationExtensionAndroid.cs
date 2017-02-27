@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UnifiedNotifications.Extensions
+namespace UnifiedNotifications.Extensions.Android
 {
     /// <summary>
     /// Mode of scheduling notification to Android Alarm Manager.
@@ -69,8 +69,6 @@ namespace UnifiedNotifications.Extensions
         bool        ongoing                 { get; set; }
         bool        onlyAlertOnce           { get; set; }
         Priority    priority                { get; set; }
-
-        bool        sound                   { get; set; }
 
         bool        showWhen                { get; set; }
         bool        whenIsChronometer       { get; set; }

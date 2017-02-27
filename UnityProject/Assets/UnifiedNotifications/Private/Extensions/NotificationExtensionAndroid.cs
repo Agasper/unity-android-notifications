@@ -1,5 +1,5 @@
 ﻿using System;
-using UnifiedNotifications.Extensions;
+using UnifiedNotifications.Extensions.Android;
 using UnityEngine;
 
 namespace UnifiedNotifications.Private.Extensions
@@ -25,8 +25,6 @@ namespace UnifiedNotifications.Private.Extensions
         public bool        ongoing                 { get; set; }
         public bool        onlyAlertOnce           { get; set; }
         public Priority    priority                { get; set; }
-
-        public bool        sound                   { get; set; }
 
         public bool        showWhen                { get; set; }
         public bool        whenIsChronometer       { get; set; }

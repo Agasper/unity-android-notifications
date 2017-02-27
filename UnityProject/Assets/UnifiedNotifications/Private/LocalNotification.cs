@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnifiedNotifications.Extensions;
+using UnifiedNotifications.Extensions.Android;
+using UnifiedNotifications.Extensions.iOS;
 using UnifiedNotifications.Private.Extensions;
 
 namespace UnifiedNotifications.Private
