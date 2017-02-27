@@ -1,4 +1,4 @@
-﻿namespace UnifiedNotifications
+﻿namespace UnifiedNotifications.Extensions
 {
     public enum RepeatInterval
     {

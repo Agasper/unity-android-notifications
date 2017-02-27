@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace UnifiedNotifications
+namespace UnifiedNotifications.Extensions
 {
     /// <summary>
     /// Mode of scheduling notification to Android Alarm Manager.
@@ -51,6 +51,8 @@ namespace UnifiedNotifications
     interface INotificationExtensionAndroid : INotificationExtension
     {
         ScheduleMode scheduleMode           { get; set; }
+        TimeSpan    repeatInterval          { get; set; }
+
         string      ticker                  { get; set; }
 
         string      subText                 { get; set; }

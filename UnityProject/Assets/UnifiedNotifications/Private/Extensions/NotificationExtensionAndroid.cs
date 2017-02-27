@@ -1,4 +1,5 @@
 ﻿using System;
+using UnifiedNotifications.Extensions;
 using UnityEngine;
 
 namespace UnifiedNotifications.Private.Extensions
@@ -6,6 +7,8 @@ namespace UnifiedNotifications.Private.Extensions
     public class NotificationExtensionAndroid : INotificationExtensionAndroid
     {
         public ScheduleMode scheduleMode           { get; set; }
+        public TimeSpan    repeatInterval          { get; set; }
+        
         public string      ticker                  { get; set; }
 
         public string      subText                 { get; set; }

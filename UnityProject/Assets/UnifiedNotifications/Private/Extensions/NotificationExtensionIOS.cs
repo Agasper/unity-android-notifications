@@ -1,4 +1,6 @@
-﻿namespace UnifiedNotifications.Private.Extensions
+﻿using UnifiedNotifications.Extensions;
+
+namespace UnifiedNotifications.Private.Extensions
 {
     public class NotificationExtensionIOS : INotificationExtensionIOS
     {

@@ -1,5 +1,6 @@
-﻿using UnifiedNotifications.Private.Extensions;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnifiedNotifications.Extensions;
+using UnifiedNotifications.Private.Extensions;
 
 namespace UnifiedNotifications.Private
 {

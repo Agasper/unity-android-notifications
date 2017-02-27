@@ -1,4 +1,6 @@
-﻿namespace UnifiedNotifications
+﻿using UnifiedNotifications.Extensions;
+
+namespace UnifiedNotifications
 {
     public interface ILocalNotification
     {

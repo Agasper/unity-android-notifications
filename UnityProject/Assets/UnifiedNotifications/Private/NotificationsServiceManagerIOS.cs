@@ -1,5 +1,8 @@
-﻿using System;
+﻿#if UNITY_IOS
+
+using System;
 using UnityEngine.iOS;
+using UnifiedNotifications.Extensions;
 
 namespace UnifiedNotifications.Private
 {
@@ -130,17 +133,17 @@ namespace UnifiedNotifications.Private
 
                     switch (iosExtension.repeatCalendar)
                     {
-                        case CalendarIdentifier.GregorianCalendar:          notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.GregorianCalendar;       break;
-                        case CalendarIdentifier.BuddhistCalendar:           notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.BuddhistCalendar;        break;
-                        case CalendarIdentifier.ChineseCalendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.ChineseCalendar;         break;
-                        case CalendarIdentifier.HebrewCalendar:             notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.HebrewCalendar;          break;
-                        case CalendarIdentifier.IslamicCalendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IslamicCalendar;         break;
-                        case CalendarIdentifier.IslamicCivilCalendar:       notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IslamicCivilCalendar;    break;
-                        case CalendarIdentifier.JapaneseCalendar:           notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.JapaneseCalendar;        break;
-                        case CalendarIdentifier.RepublicOfChinaCalendar:    notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.RepublicOfChinaCalendar; break;
-                        case CalendarIdentifier.PersianCalendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.PersianCalendar;         break;
-                        case CalendarIdentifier.IndianCalendar:             notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IndianCalendar;          break;
-                        case CalendarIdentifier.ISO8601Calendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.ISO8601Calendar;         break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.GregorianCalendar:          notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.GregorianCalendar;       break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.BuddhistCalendar:           notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.BuddhistCalendar;        break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.ChineseCalendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.ChineseCalendar;         break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.HebrewCalendar:             notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.HebrewCalendar;          break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.IslamicCalendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IslamicCalendar;         break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.IslamicCivilCalendar:       notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IslamicCivilCalendar;    break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.JapaneseCalendar:           notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.JapaneseCalendar;        break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.RepublicOfChinaCalendar:    notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.RepublicOfChinaCalendar; break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.PersianCalendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.PersianCalendar;         break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.IndianCalendar:             notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IndianCalendar;          break;
+                        case UnifiedNotifications.Extensions.CalendarIdentifier.ISO8601Calendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.ISO8601Calendar;         break;
                     }
                 }
             }
@@ -157,3 +160,4 @@ namespace UnifiedNotifications.Private
         #endregion
     }
 }
+#endif

@@ -74,22 +74,16 @@ namespace Android.LocalNotifications
                 return;
             }
 
-            long timeDeltaMs = (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds;
-            if (timeDeltaMs >= 0)
-            {
-                    pluginClass.CallStatic
-                        ( "SetNotification"
-                        , id
-                        , timeDeltaMs
-                        , (repeatInterval != TimeSpan.Zero) ? (long)repeatInterval.TotalMilliseconds : 0
-                        , cancelPrevious
-                        , dataObject
-                        , (int)scheduleMode);
-            }
-            else
-            {
-                Debug.LogWarningFormat("Passed notification date is in past ({0}), ignored.", when);
-            }
+            long timeDeltaMs = Math.Max(0, (long)(when.ToUniversalTime() - DateTime.UtcNow).TotalMilliseconds);
+
+            pluginClass.CallStatic
+                ( "SetNotification"
+                , id
+                , timeDeltaMs
+                , (repeatInterval != TimeSpan.Zero) ? (long)repeatInterval.TotalMilliseconds : 0
+                , cancelPrevious
+                , dataObject
+                , (int)scheduleMode);
 #endif
         }
 

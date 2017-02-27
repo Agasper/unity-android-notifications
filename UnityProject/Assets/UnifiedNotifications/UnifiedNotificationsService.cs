@@ -51,11 +51,7 @@ namespace UnifiedNotifications
             {
                 if (manager_ == null)
                 {
-#if UNITY_IOS
-                    manager_ = new Private.NotificationsServiceManagerIOS();
-#elif UNITY_ANDROID
-                    manager_ = new Private.NotificationsServiceManagerAndroid();
-#endif
+                    manager_ = Private.NotificationsServiceManagerBase.Instantiate();
                 }
 
                 return manager_;
@@ -64,7 +60,7 @@ namespace UnifiedNotifications
         #endregion
 
         #region Private static field.
-        static Private.INotificationsServiceManager manager_;
+        static Private.INotificationsServiceManager manager_ = null;
         #endregion
     }
 }
