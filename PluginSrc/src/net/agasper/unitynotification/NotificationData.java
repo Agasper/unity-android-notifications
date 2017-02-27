@@ -2,8 +2,6 @@ package net.agasper.unitynotification;
 
 import java.io.Serializable;
 
-import android.app.Notification;
-
 public final class NotificationData implements Serializable
 {
 	private static final long serialVersionUID = -7733864630402717326L;
