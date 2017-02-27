@@ -5,7 +5,7 @@ namespace UnifiedNotifications
     public sealed class UnifiedNotificationsService
     {
         #region Public static API.
-        static ILocalNotification CreateLocalNotification()
+        public static ILocalNotification CreateLocalNotification()
         {
             if (manager != null)
                 return manager.CreateLocalNotification();
@@ -13,7 +13,7 @@ namespace UnifiedNotifications
             return null;
         }
 
-        static void ScheduleLocalNotification
+        public static void ScheduleLocalNotification
             ( string id
             , DateTime when
             , ILocalNotification notification
@@ -23,7 +23,7 @@ namespace UnifiedNotifications
                 manager.ScheduleLocalNotification(id, when, notification, cancelPrevious);
         }
 
-        static void PresentLocalNotificationNow
+        public static void PresentLocalNotificationNow
             ( string id
             , ILocalNotification notification)
         {
@@ -31,13 +31,13 @@ namespace UnifiedNotifications
                 manager.PresentLocalNotificationNow(id, notification);
         }
 
-        static void CancelLocalNotification (string id, bool cancelPending = true, bool cancelShown = true)
+        public static void CancelLocalNotification (string id, bool cancelPending = true, bool cancelShown = true)
         {
             if (manager != null)
                 manager.CancelLocalNotification(id);
         }
 
-        static void ClearLocalNotifications (bool cancelPending = true, bool cancelShown = true)
+        public static void ClearLocalNotifications (bool cancelPending = true, bool cancelShown = true)
         {
             if (manager != null)
                 manager.ClearLocalNotifications();
