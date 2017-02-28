@@ -78,8 +78,10 @@ namespace UnifiedNotifications.Extensions.Android
 
         Color32     color                   { get; set; }
 
+        bool        useVibration            { get; set; }
         int[]       vibrationPattern        { get; set; }
 
+        bool        useLights               { get; set; }
         Color32     lightsColor             { get; set; }
         int         lightsOn                { get; set; } // In milliseconds.
         int         lightsOff               { get; set; } // In milliseconds.

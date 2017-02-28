@@ -158,39 +158,42 @@ namespace Android.LocalNotifications
                     dataObject.Set("isGroupSummary", data.isGroupSummary);
                 }
 
-                dataObject.Set("category",      data.category);
+                dataObject.Set("category",          data.category);
 
-                dataObject.Set("autoCancel",    data.autoCancel);
-                dataObject.Set("localOnly",     data.localOnly);
-                dataObject.Set("ongoing",       data.ongoing);
-                dataObject.Set("onlyAlertOnce", data.onlyAlertOnce);
-                dataObject.Set("priority",      (int)data.priority);
+                dataObject.Set("autoCancel",        data.autoCancel);
+                dataObject.Set("localOnly",         data.localOnly);
+                dataObject.Set("ongoing",           data.ongoing);
+                dataObject.Set("onlyAlertOnce",     data.onlyAlertOnce);
+                dataObject.Set("priority",          (int)data.priority);
 
-                dataObject.Set("sound",         data.sound);
+                dataObject.Set("useSound",          data.useSound);
+                dataObject.Set("customSoundName",   data.customSoundName);
 
-                dataObject.Set("showWhen",      data.showWhen);
+                dataObject.Set("showWhen",          data.showWhen);
                 if (data.customWhen != NotificationData.noCustomWhen)
                 {
                     dataObject.Set("useCustomWhen", true);
-                    dataObject.Set("customWhen", data.customWhen);
+                    dataObject.Set("customWhen",    data.customWhen);
                 }
 
                 dataObject.Set("whenIsChronometer", data.whenIsChronometer);
                 dataObject.Set("chronometerCountdown", data.chronometerCountdown);
 
-                dataObject.Set("color",         (data.color.a << 24) | (data.color.r << 16) | (data.color.g << 8) | data.color.b);
+                dataObject.Set("color",             (data.color.a << 24) | (data.color.r << 16) | (data.color.g << 8) | data.color.b);
 
+                dataObject.Set("useVibration",      data.useVibration);
                 if (data.vibrationPattern != null)
                     dataObject.Call("SetVibrationPattern", data.vibrationPattern);
 
-                dataObject.Set("lightsColor",   (data.lightsColor.a << 24) | (data.lightsColor.r << 16) | (data.lightsColor.g << 8) | data.lightsColor.b);
-                dataObject.Set("lightsOn",      data.lightsOn);
-                dataObject.Set("lightsOff",     data.lightsOff);
+                dataObject.Set("useLights",         data.useLights);
+                dataObject.Set("lightsColor",       (data.lightsColor.a << 24) | (data.lightsColor.r << 16) | (data.lightsColor.g << 8) | data.lightsColor.b);
+                dataObject.Set("lightsOn",          data.lightsOn);
+                dataObject.Set("lightsOff",         data.lightsOff);
 
                 dataObject.Set("smallIconResource", data.smallIconResource);
                 dataObject.Set("largeIconResource", data.largeIconResource);
 
-                dataObject.Set("person",        data.person);
+                dataObject.Set("person",            data.person);
             }
             else
             {

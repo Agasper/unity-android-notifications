@@ -95,23 +95,24 @@ namespace UnifiedNotifications.Private
             notificationObject.alertAction = notification.message;
             notificationObject.alertBody = notification.message;
 
+            if (notification.useSound)
+            {
+                if (notification.customSoundName != null)
+                {
+                    notificationObject.soundName = notification.customSoundName;
+                }
+                else
+                {
+                    notificationObject.soundName = UnityEngine.iOS.LocalNotification.defaultSoundName;
+                }
+            }
+
             var iosExtension = notification.GetExtension<INotificationExtensionIOS>(false);
             if (iosExtension != null)
             {
                 notificationObject.hasAction = iosExtension.hasAction;
                 notificationObject.applicationIconBadgeNumber = iosExtension.applicationIconBadgeNumber;
                 
-                if (notification.useSound)
-                {
-                    if (iosExtension.soundName != null)
-                    {
-                        notificationObject.soundName = iosExtension.soundName;
-                    }
-                    else
-                    {
-                        notificationObject.soundName = UnityEngine.iOS.LocalNotification.defaultSoundName;
-                    }
-                }
 
                 if (iosExtension.repeatInterval != RepeatInterval.None)
                 {
@@ -144,13 +145,6 @@ namespace UnifiedNotifications.Private
                         case CalendarIdentifier.IndianCalendar:             notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.IndianCalendar;          break;
                         case CalendarIdentifier.ISO8601Calendar:            notificationObject.repeatCalendar = UnityEngine.iOS.CalendarIdentifier.ISO8601Calendar;         break;
                     }
-                }
-            }
-            else
-            {
-                if (notification.useSound)
-                {
-                    notificationObject.soundName = UnityEngine.iOS.LocalNotification.defaultSoundName;
                 }
             }
 

@@ -13,7 +13,7 @@ public class NotificationTest : MonoBehaviour
     static readonly string[] groups = { null, "Group 1", "Group 2", "Group 3" };
     static readonly Color32[] colors = { NotificationData.noColor, Color.red, Color.green, Color.blue, Color.white };
     static readonly int[][] vibrationPatterns = { null, new int[] {1000, 1000 }, new int[] { 100, 100, 200, 200, 100, 100}, new int[] { 100, 200, 300, 400, 500, 600} };
-    static readonly string[] vibrationPatternNames = { "<None>", "Short", "Long Random", "Long Slowdown" };
+    static readonly string[] vibrationPatternNames = { "<Default>", "Short", "Long Random", "Long Slowdown" };
     static readonly int[] lightTimes = { 100, 500, 1000, 2000 };
     static readonly long[] whenChronometerValues = { 0, 10000, 30000, 3600000 };
     static readonly DateTime[] whenDateTimeValues = { new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2000, 1, 1, 12, 0, 0, DateTimeKind.Utc) };
@@ -80,6 +80,7 @@ public class NotificationTest : MonoBehaviour
     private bool showIconsBlock = false;
     private bool showWhenBlock = false;
     private bool showProgressBlock = false;
+    private bool showSoundBlock = false;
     private bool showPersonBlock = false;
     private bool showOtherOptionsBlock = false;
     private bool showScheduleOptionsBlock = true;
@@ -241,22 +242,42 @@ public class NotificationTest : MonoBehaviour
                 }
 
                 //----------------------------------------------------------------------------------------
-                if (GUILayout.Button("Vibration pattern:", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)))
+                if (GUILayout.Button("Sound options:", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)))
+                    showSoundBlock = !showSoundBlock;
+
+                if (showSoundBlock)
+                {
+                    GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                    {
+                        data.SetUseSound(GUILayout.Toggle(data.useSound, "Use sound"));
+                    }
+                    GUILayout.EndHorizontal();
+                }
+
+                //----------------------------------------------------------------------------------------
+                if (GUILayout.Button("Vibration options:", GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true)))
                     showVibrationBlock = !showVibrationBlock;
 
                 if (showVibrationBlock)
                 {
-                    GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
+                    data.SetUseVibration ( GUILayout.Toggle(data.useVibration, "Use vibration"));
+
+                    if (data.useVibration)
                     {
-                        for (int i = 0; i < vibrationPatterns.Length; i++)
+                        GUILayout.Label("Vibration pattern:");
+
+                        GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                         {
-                            if (GUILayout.Toggle(data.vibrationPattern == vibrationPatterns[i], vibrationPatternNames[i]))
+                            for (int i = 0; i < vibrationPatterns.Length; i++)
                             {
-                                data.SetVibrationPattern(vibrationPatterns[i]);
+                                if (GUILayout.Toggle(data.vibrationPattern == vibrationPatterns[i], vibrationPatternNames[i]))
+                                {
+                                    data.SetVibrationPattern(vibrationPatterns[i]);
+                                }
                             }
                         }
+                        GUILayout.EndVertical();
                     }
-                    GUILayout.EndHorizontal();
                 }
 
                 //----------------------------------------------------------------------------------------
@@ -267,47 +288,54 @@ public class NotificationTest : MonoBehaviour
                 {
                     GUILayout.BeginVertical(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                     {
-                        GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                        {
-                            GUILayout.Label("Color: ");
+                        data.SetUseLights ( GUILayout.Toggle(data.useVibration, "Use lights"));
 
-                            for (int i = 0; i < colors.Length; i++)
+                        if (data.useLights)
+                        {
+                            GUILayout.Label("Custom lights settings");
+
+                            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                             {
-                                if (LayoutColoredButton(colors[i], new GUIContent((Color)data.lightsColor == (Color)colors[i] ? " +++++ " : " ----- ")))
+                                GUILayout.Label("Color: ");
+
+                                for (int i = 0; i < colors.Length; i++)
                                 {
-                                    data.SetLightsColor(colors[i]);
+                                    if (LayoutColoredButton(colors[i], new GUIContent((Color)data.lightsColor == (Color)colors[i] ? " +++++ " : " ----- ")))
+                                    {
+                                        data.SetLightsColor(colors[i]);
+                                    }
                                 }
                             }
-                        }
-                        GUILayout.EndHorizontal();
+                            GUILayout.EndHorizontal();
 
-                        GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                        {
-                            GUILayout.Label("Lights On: ");
-
-                            for (int i = 0; i < lightTimes.Length; i++)
+                            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                             {
-                                if (GUILayout.Toggle(data.lightsOn == lightTimes[i], lightTimes[i].ToString() ))
+                                GUILayout.Label("Lights On: ");
+
+                                for (int i = 0; i < lightTimes.Length; i++)
                                 {
-                                    data.SetLightsOn(lightTimes[i]);
+                                    if (GUILayout.Toggle(data.lightsOn == lightTimes[i], lightTimes[i].ToString() ))
+                                    {
+                                        data.SetLightsOn(lightTimes[i]);
+                                    }
                                 }
                             }
-                        }
-                        GUILayout.EndHorizontal();
+                            GUILayout.EndHorizontal();
 
-                        GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
-                        {
-                            GUILayout.Label("Lights Off: ");
-
-                            for (int i = 0; i < lightTimes.Length; i++)
+                            GUILayout.BeginHorizontal(GUILayout.ExpandWidth(true), GUILayout.ExpandHeight(true));
                             {
-                                if (GUILayout.Toggle(data.lightsOff == lightTimes[i], lightTimes[i].ToString() ))
+                                GUILayout.Label("Lights Off: ");
+
+                                for (int i = 0; i < lightTimes.Length; i++)
                                 {
-                                    data.SetLightsOff(lightTimes[i]);
+                                    if (GUILayout.Toggle(data.lightsOff == lightTimes[i], lightTimes[i].ToString() ))
+                                    {
+                                        data.SetLightsOff(lightTimes[i]);
+                                    }
                                 }
                             }
+                            GUILayout.EndHorizontal();
                         }
-                        GUILayout.EndHorizontal();
                     }
                     GUILayout.EndVertical();
                 }
@@ -448,7 +476,6 @@ public class NotificationTest : MonoBehaviour
                     {
                         cancelPrevious = GUILayout.Toggle(cancelPrevious, "Cancel Previous");
                         useTicker = GUILayout.Toggle(useTicker, "Use Ticker");
-                        data.SetSound(GUILayout.Toggle(data.sound, "Sound"));
                         data.SetAutoCancel(GUILayout.Toggle(data.autoCancel, "Auto Cancel"));
                         data.SetLocalOnly(GUILayout.Toggle(data.localOnly, "Local only notification"));
                         data.SetOngoing(GUILayout.Toggle(data.ongoing, "'Ongoing' notification"));

@@ -26,6 +26,8 @@ namespace UnifiedNotifications.Private.Extensions
         public bool        onlyAlertOnce           { get; set; }
         public Priority    priority                { get; set; }
 
+        public string      customSoundName         { get; set; }
+
         public bool        showWhen                { get; set; }
         public bool        whenIsChronometer       { get; set; }
         public bool        chronometerCountdown    { get; set; }
@@ -34,8 +36,10 @@ namespace UnifiedNotifications.Private.Extensions
 
         public Color32     color                   { get; set; }
 
+        public bool        useVibration            { get; set; }
         public int[]       vibrationPattern        { get; set; }
 
+        public bool        useLights               { get; set; }
         public Color32     lightsColor             { get; set; }
         public int         lightsOn                { get; set; } // In milliseconds.
         public int         lightsOff               { get; set; } // In milliseconds.

@@ -144,7 +144,6 @@
     {
         bool                hasAction                   { get; set; }
         int                 applicationIconBadgeNumber  { get; set; }
-        string              soundName                   { get; set; }
 
         CalendarIdentifier  repeatCalendar              { get; set; }
         RepeatInterval      repeatInterval              { get; set; }

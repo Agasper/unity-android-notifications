@@ -43,5 +43,7 @@ namespace UnifiedNotifications.Private
         public string       title               { get; set; }
         public string       message             { get; set; }
         public bool         useSound            { get; set; }
+
+        public string       customSoundName     { get; set; }
     }
 }

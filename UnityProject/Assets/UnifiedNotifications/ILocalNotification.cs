@@ -10,5 +10,6 @@ namespace UnifiedNotifications
         string      message             { get; set; }
 
         bool        useSound            { get; set; }
+        string      customSoundName     { get; set; }
     }
 }

@@ -62,7 +62,8 @@ namespace Android.LocalNotifications
         public bool     onlyAlertOnce       { get; private set; }
         public Priority priority            { get; private set; }
 
-        public bool     sound               { get; private set; }
+        public bool     useSound            { get; private set; }
+        public string   customSoundName     { get; private set; }
 
         public bool     showWhen            { get; private set; }
         public bool     whenIsChronometer   { get; private set; }
@@ -70,8 +71,10 @@ namespace Android.LocalNotifications
 
         public Color32  color               { get; private set; }
 
+        public bool     useVibration        { get; private set; }
         public int[]    vibrationPattern    { get; private set; }
 
+        public bool     useLights           { get; private set; }
         public Color32  lightsColor         { get; private set; }
         public int      lightsOn            { get; private set; } // In milliseconds.
         public int      lightsOff           { get; private set; } // In milliseconds.
@@ -127,7 +130,8 @@ namespace Android.LocalNotifications
             this.onlyAlertOnce = false;
             this.priority = Priority.Default;
 
-            this.sound = true;
+            this.useSound = false;
+            this.customSoundName = null;
 
             this.showWhen = true;
             this.customWhen = noCustomWhen;
@@ -136,8 +140,10 @@ namespace Android.LocalNotifications
 
             this.color = noColor;
 
+            this.useVibration = false;
             this.vibrationPattern = null;
 
+            this.useLights = false;
             this.lightsColor = noColor;
             this.lightsOn = 1000;
             this.lightsOff = 3000;
@@ -240,9 +246,15 @@ namespace Android.LocalNotifications
             return this;
         }
 
-        public NotificationData SetSound(bool sound)
+        public NotificationData SetUseSound(bool useSound)
         {
-            this.sound = sound;
+            this.useSound = useSound;
+            return this;
+        }
+
+        public NotificationData SetCustomSoundName(string customSoundName)
+        {
+            this.customSoundName = customSoundName;
             return this;
         }
 
@@ -284,9 +296,21 @@ namespace Android.LocalNotifications
             return this;
         }
 
+        public NotificationData SetUseVibration(bool useVibration)
+        {
+            this.useVibration = useVibration;
+            return this;
+        }
+
         public NotificationData SetVibrationPattern(int[] vibrationPattern)
         {
             this.vibrationPattern = vibrationPattern;
+            return this;
+        }
+
+        public NotificationData SetUseLights(bool useLights)
+        {
+            this.useLights = useLights;
             return this;
         }
 

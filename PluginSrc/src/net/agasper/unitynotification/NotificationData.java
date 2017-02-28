@@ -42,7 +42,8 @@ public final class NotificationData implements Serializable
 	public boolean onlyAlertOnce;
 	public int priority;
 	
-	public boolean sound;
+	public boolean useSound;
+	public String customSoundName;
 
 	public boolean showWhen;
 	public boolean useCustomWhen;
@@ -52,8 +53,10 @@ public final class NotificationData implements Serializable
 	
 	public int color;
 	
+	public boolean useVibration;
 	public int[] vibrationPattern;
 
+	public boolean useLights;
 	public int lightsColor;
 	public int lightsOn;
 	public int lightsOff;
@@ -84,7 +87,8 @@ public final class NotificationData implements Serializable
 		onlyAlertOnce = false;
 		priority = 0; // Notification.PRIORITY_DEFAULT;
 		
-		sound = true;
+		useSound = false;
+		customSoundName = null;
 
 		showWhen = true;
 		useCustomWhen = false;
@@ -94,8 +98,10 @@ public final class NotificationData implements Serializable
 		
 		color = 0;
 		
+		useVibration = false;
 		vibrationPattern = null;
 
+		useLights = false;
 		lightsColor = 0;
 		lightsOn = 1000;
 		lightsOff = 3000;

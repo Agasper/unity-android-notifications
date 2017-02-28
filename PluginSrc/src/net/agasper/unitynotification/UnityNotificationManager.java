@@ -10,7 +10,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.util.Log;
@@ -165,6 +164,8 @@ public class UnityNotificationManager extends BroadcastReceiver
         
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         
+        int defaultsFlags = 0;
+        
         builder.setContentIntent(contentIntent)
         	.setShowWhen(data.showWhen)
         	.setAutoCancel(data.autoCancel)
@@ -213,20 +214,46 @@ public class UnityNotificationManager extends BroadcastReceiver
 		if (data.largeIconResource != null && data.largeIconResource.length() > 0)
 			builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(data.largeIconResource, "drawable", context.getPackageName())));
 
-        if (data.sound)
-            builder.setSound(RingtoneManager.getDefaultUri(2));
-
-        if (data.vibrationPattern != null)
+        if (data.useSound)
         {
-        	long[] tmpArray = new long[data.vibrationPattern.length];
-        	for (int i = 0; i < data.vibrationPattern.length; i++)
-        		tmpArray[i] = data.vibrationPattern[i];
-        	
-            builder.setVibrate(tmpArray);
+        	if (data.customSoundName != null && data.customSoundName.length() > 0)
+        	{
+        		builder.setSound(Uri.parse("android.resource://" + context.getPackageName() + "/raw/" + data.customSoundName));
+        	}
+        	else
+        	{
+                // builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        		defaultsFlags |= Notification.DEFAULT_SOUND;
+        	}
         }
 
-        if (data.lightsColor != 0 && data.lightsOn > 0 && data.lightsOff > 0)
-            builder.setLights(data.lightsColor, data.lightsOn, data.lightsOff);
+        if (data.useVibration)
+        {
+	        if (data.vibrationPattern != null)
+	        {
+	        	long[] tmpArray = new long[data.vibrationPattern.length];
+	        	for (int i = 0; i < data.vibrationPattern.length; i++)
+	        		tmpArray[i] = data.vibrationPattern[i];
+	        	
+	            builder.setVibrate(tmpArray);
+	        }
+	        else
+	        {
+	        	defaultsFlags |= Notification.DEFAULT_VIBRATE;
+	        }
+        }
+
+        if (data.useLights)
+        {
+        	if (data.lightsColor != 0 && data.lightsOn > 0 && data.lightsOff > 0)
+        	{
+        		builder.setLights(data.lightsColor, data.lightsOn, data.lightsOff);
+        	}
+        	else
+        	{
+        		defaultsFlags |= Notification.DEFAULT_LIGHTS;
+        	}
+        }
         
         if (data.person != null && data.person.length() > 0)
         	builder.addPerson(data.person);
@@ -252,6 +279,8 @@ public class UnityNotificationManager extends BroadcastReceiver
         		case NotificationData.CATEGORY_TRANSPORT: 		builder.setCategory(Notification.CATEGORY_TRANSPORT); break; 
         	}
         }
+        
+        builder.setDefaults(defaultsFlags);
         
 		Notification notification = builder.build();
         notificationManager.notify(id, 0, notification);

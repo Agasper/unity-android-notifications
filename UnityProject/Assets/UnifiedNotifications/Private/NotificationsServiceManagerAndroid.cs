@@ -19,7 +19,8 @@ namespace UnifiedNotifications.Private
 
             Android.LocalNotifications.NotificationData notificationObject = new Android.LocalNotifications.NotificationData(notification.title, notification.message);
 
-            notificationObject.SetSound ( notification.useSound );
+            notificationObject.SetUseSound (notification.useSound);
+            notificationObject.SetCustomSoundName(notification.customSoundName);
 
             var androidExtension = notification.GetExtension<INotificationExtensionAndroid>(false);
             if (androidExtension != null)
@@ -54,8 +55,10 @@ namespace UnifiedNotifications.Private
 
                 notificationObject.SetColor(androidExtension.color);
 
+                notificationObject.SetUseVibration(notificationObject.useVibration);
                 notificationObject.SetVibrationPattern(androidExtension.vibrationPattern);
 
+                notificationObject.SetUseLights(androidExtension.useLights);
                 notificationObject.SetLightsColor(androidExtension.lightsColor);
                 notificationObject.SetLightsOn(androidExtension.lightsOn);
                 notificationObject.SetLightsOff(androidExtension.lightsOff);
