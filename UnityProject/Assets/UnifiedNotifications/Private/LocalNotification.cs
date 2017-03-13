@@ -23,13 +23,13 @@ namespace UnifiedNotifications.Private
 
             if (createIfNotExists)
             {
-                if (typeof(ExtensionT) is INotificationExtensionAndroid)
+                if (typeof(ExtensionT) == typeof(INotificationExtensionAndroid))
                 {
                     INotificationExtension extension = new NotificationExtensionAndroid();
                     extensions.Add(extension);
                     return (ExtensionT)extension;
                 }
-                else if (typeof(ExtensionT) is INotificationExtensionIOS)
+                else if (typeof(ExtensionT) == typeof(INotificationExtensionIOS))
                 {
                     INotificationExtension extension = new NotificationExtensionIOS();
                     extensions.Add(extension);

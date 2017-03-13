@@ -158,7 +158,7 @@ namespace Android.LocalNotifications
                     dataObject.Set("isGroupSummary", data.isGroupSummary);
                 }
 
-                dataObject.Set("category",          data.category);
+                dataObject.Set("category",          (int)data.category);
 
                 dataObject.Set("autoCancel",        data.autoCancel);
                 dataObject.Set("localOnly",         data.localOnly);
