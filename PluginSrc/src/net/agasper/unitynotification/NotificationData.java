@@ -1,5 +1,10 @@
 package net.agasper.unitynotification;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 public final class NotificationData implements Serializable
@@ -112,8 +117,25 @@ public final class NotificationData implements Serializable
 		person = null;
 	}
 	
-	public void SetVibrationPattern (int[] pattern)
+	public void SetVibrationPattern (int[] pattern) // NOTE: Method accessor required because JNI fails to set array directly to a filed, don't know why.
 	{
 		vibrationPattern = pattern;
+	}
+
+	public byte[] Serialize()
+		throws IOException
+	{
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream os = new ObjectOutputStream(out);
+		os.writeObject(this);
+		return out.toByteArray();
+	}
+	
+	public static NotificationData Deserialize(byte[] data)
+		throws IOException, ClassNotFoundException
+	{
+		ByteArrayInputStream in = new ByteArrayInputStream(data);
+		ObjectInputStream is = new ObjectInputStream(in);
+		return (NotificationData)is.readObject();
 	}
 }
