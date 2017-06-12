@@ -13,8 +13,9 @@ Features:
 
 **How to set up big icon ?**
 
-Just put it into drawable directories *\UnityProject\Assets\Plugins\Android\res\* with name *notify_icon_big.png*. And in the SendNotification method set bigIcon to *"notify_icon_big"*
-If you want to use app icon just set bigIcon = *"app_icon"*
+Just put it into drawable directories *\UnityProject\Assets\Plugins\Android\res\* with name *notify_icon_big.png*. And in the SendNotification method set bigIcon to *"notify_icon_big"*.
+
+If you want to use app icon just set bigIcon = *"app_icon"*.
 
 **How to get rid of obsolete warnings like "*OBSOLETE - Providing Android resources in Assets/Plugins/Android/res is deprecated, please move your resources to an Android Library. See "Building Plugins for Android" section of the Manual.*" ?**
 
