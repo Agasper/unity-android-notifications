@@ -1,62 +1,101 @@
-﻿using UnityEngine;
-using System.Collections;
+﻿using System;
+using UnityEngine;
+using UnityEngine.iOS;
 using System.Collections.Generic;
-using System;
 
-class LocalNotification
+public class LocalNotification
 {
-    /// <summary>
-    /// Inexact uses `set` method
-    /// Exact uses `setExact` method
-    /// ExactAndAllowWhileIdle uses `setAndAllowWhileIdle` method
-    /// Documentation: https://developer.android.com/intl/ru/reference/android/app/AlarmManager.html
-    /// </summary>
-    public enum NotificationExecuteMode
-    {
-        Inexact = 0,
-        Exact = 1,
-        ExactAndAllowWhileIdle = 2
-    }
-
-#if UNITY_ANDROID && !UNITY_EDITOR
+    #if UNITY_ANDROID && !UNITY_EDITOR
     private static string fullClassName = "net.agasper.unitynotification.UnityNotificationManager";
-    private static string mainActivityClassName = "com.unity3d.player.UnityPlayerNativeActivity";
-#endif
+    #endif
 
-    public static void SendNotification(int id, TimeSpan delay, string title, string message, string icon_name)
+
+    public static int SendNotification(TimeSpan delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
     {
-        SendNotification(id, (int)delay.TotalSeconds, title, message, Color.white);
+        int id = new System.Random().Next();
+        return SendNotification(id, (int)delay.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon);
     }
-    
-    public static void SendNotification(int id, long delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", NotificationExecuteMode executeMode = NotificationExecuteMode.Inexact)
+
+    public static int SendNotification(int id, TimeSpan delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        return SendNotification(id, (int)delay.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon);
+    }
+
+    public static int SendNotification(int id, long delayMs, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
+    {
+        #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
         if (pluginClass != null)
         {
-            pluginClass.CallStatic("SetNotification", id, delay * 1000L, title, message, message, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, (int)executeMode, mainActivityClassName);
+            pluginClass.CallStatic("SetNotification", id, delayMs, title, message, message, 
+                sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", 
+        bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, Application.bundleIdentifier);
         }
-#endif
+        return id;
+        #elif UNITY_IOS && !UNITY_EDITOR
+        UnityEngine.iOS.LocalNotification notification = new UnityEngine.iOS.LocalNotification();
+        DateTime now = DateTime.Now;
+        DateTime fireDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).AddSeconds(delayMs);
+        notification.fireDate = fireDate;
+        notification.alertBody = message;
+        notification.alertAction = title;
+        notification.hasAction = false;
+
+        UnityEngine.iOS.NotificationServices.ScheduleLocalNotification(notification);
+
+        return (int)fireDate.Ticks;
+        #else
+        return 0;
+        #endif
     }
 
-    public static void SendRepeatingNotification(int id, long delay, long timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
+    public static int SendRepeatingNotification(TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        int id = new System.Random().Next();
+        return SendRepeatingNotification(id, (int)delay.TotalSeconds, (int)timeout.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon);
+    }
+
+    public static int SendRepeatingNotification(int id, TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
+    {
+        return SendRepeatingNotification(id, (int)delay.TotalSeconds, (int)timeout.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon);
+    }
+
+    public static int SendRepeatingNotification(int id, long delayMs, long timeoutMs, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "")
+    {
+        #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
         if (pluginClass != null)
         {
-            pluginClass.CallStatic("SetRepeatingNotification", id, delay * 1000L, title, message, message, timeout * 1000, sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, mainActivityClassName);
+            pluginClass.CallStatic("SetRepeatingNotification", id, delayMs, title, message, message, timeoutMs, 
+                sound ? 1 : 0, vibrate ? 1 : 0, lights ? 1 : 0, bigIcon, "notify_icon_small", 
+                bgColor.r * 65536 + bgColor.g * 256 + bgColor.b, Application.bundleIdentifier);
         }
-#endif
+        return id;
+        #elif UNITY_IOS && !UNITY_EDITOR
+        throw new System.NotImplementedException();
+        #else
+        return 0;
+        #endif
     }
 
     public static void CancelNotification(int id)
     {
-#if UNITY_ANDROID && !UNITY_EDITOR
+        #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
         if (pluginClass != null) {
             pluginClass.CallStatic("CancelNotification", id);
         }
-#endif
+        #endif
+
+        #if UNITY_IOS && !UNITY_EDITOR
+        foreach (UnityEngine.iOS.LocalNotification notif in UnityEngine.iOS.NotificationServices.scheduledLocalNotifications) 
+        { 
+            if ((int)notif.fireDate.Ticks == id)
+            {
+                UnityEngine.iOS.NotificationServices.CancelLocalNotification(notif);
+            }
+        }
+        #endif
     }
+
 }
