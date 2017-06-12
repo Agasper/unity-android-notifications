@@ -108,8 +108,7 @@ public class UnityNotificationManager extends BroadcastReceiver
             builder.setSmallIcon(res.getIdentifier(s_icon, "drawable", context.getPackageName()));
 
         if (l_icon != null && l_icon.length() > 0)
-            //builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(l_icon, "drawable", context.getPackageName())));
-            builder.setLargeIcon((((BitmapDrawable)context.getResources().getDrawable(res.getIdentifier(l_icon, "drawable", context.getPackageName()))).getBitmap()));
+            builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(l_icon, "drawable", context.getPackageName())));
 
 
         if (sound)

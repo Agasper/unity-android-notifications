@@ -1,0 +1,14 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/LocalNotification.cs">
+    <Files>
+      <File FileName="Assets/NotificationTest.cs" Line="13" Column="155" />
+      <File FileName="Assets/LocalNotification.cs" Line="99" Column="6" />
+      <File FileName="Assets/Plugins/Android/AndroidManifest.xml" Line="26" Column="88" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
