@@ -7,7 +7,7 @@ Features:
 * Set delayed repeatable notification
 * Supports custom icon and large icon
 * Fully supports Unity 4.x, 5.x
-* Fully supports Android 4.0.3 - 6.0
+* Fully supports Android 4.0.3 - 7.1
 
 ### FAQ
 
