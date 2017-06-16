@@ -17,6 +17,10 @@ Just put it into drawable directories *\UnityProject\Assets\Plugins\Android\res\
 
 If you want to use app icon just set bigIcon = **"app_icon"**.
 
+**How to recompile plugin ?**
+
+There is special gradle task called **exportJar**, just run it and grab plugin's jar in app/release/notification.jar
+
 **How to get rid of obsolete warnings like "*OBSOLETE - Providing Android resources in Assets/Plugins/Android/res is deprecated, please move your resources to an Android Library. See "Building Plugins for Android" section of the Manual.*" ?**
 
 You can avoid this by recompiling plugin with icons inside.
