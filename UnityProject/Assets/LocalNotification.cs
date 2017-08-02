@@ -103,7 +103,7 @@ public class LocalNotification
         #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
         if (pluginClass != null) {
-            pluginClass.CallStatic("ClearShowingNotifications", id);
+            pluginClass.CallStatic("ClearShowingNotifications");
         }
         #endif
 
