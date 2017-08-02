@@ -83,7 +83,7 @@ public class LocalNotification
         #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
         if (pluginClass != null) {
-            pluginClass.CallStatic("CancelNotification", id);
+            pluginClass.CallStatic("CancelPendingNotification", id);
         }
         #endif
 
@@ -98,4 +98,17 @@ public class LocalNotification
         #endif
     }
 
+    public static void ClearNotifications()
+    {
+        #if UNITY_ANDROID && !UNITY_EDITOR
+        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        if (pluginClass != null) {
+            pluginClass.CallStatic("ClearShowingNotifications", id);
+        }
+        #endif
+
+        #if UNITY_IOS && !UNITY_EDITOR
+        UnityEngine.iOS.NotificationServices.ClearLocalNotifications();
+        #endif
+    }
 }

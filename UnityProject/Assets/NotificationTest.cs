@@ -3,6 +3,11 @@ using System.Collections;
 
 public class NotificationTest : MonoBehaviour
 {
+    void Awake()
+    {
+        LocalNotification.ClearNotifications();
+    }
+
     public void OneTime()
     {
         LocalNotification.SendNotification(1, 5000, "Title", "Long message text", new Color32(0xff, 0x44, 0x44, 255));
