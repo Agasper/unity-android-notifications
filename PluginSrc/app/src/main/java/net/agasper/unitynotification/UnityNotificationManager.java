@@ -126,12 +126,19 @@ public class UnityNotificationManager extends BroadcastReceiver
         notificationManager.notify(id, notification);
     }
 
-    public static void CancelNotification(int id)
+    public static void CancelPendingNotification(int id)
     {
         Activity currentActivity = UnityPlayer.currentActivity;
         AlarmManager am = (AlarmManager)currentActivity.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(currentActivity, UnityNotificationManager.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(currentActivity, id, intent, 0);
         am.cancel(pendingIntent);
+    }
+
+    public static void ClearShowingNotifications()
+    {
+        Activity currentActivity = UnityPlayer.currentActivity;
+        NotificationManager nm = (NotificationManager)currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancelAll();
     }
 }
