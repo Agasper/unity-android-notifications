@@ -11,9 +11,14 @@ Features:
 
 ### FAQ
 
+**How to set up small icon ?**
+
+Use the Android Asset Studio notification icons generator (https://romannurik.github.io/AndroidAssetStudio/icons-notification.html) to prepare small icons pack and replace temporary icons named **notify_icon_small.png** with the new ones in *\UnityProject\Assets\Plugins\Android\res\*
+
 **How to set up big icon ?**
 
-Just put it into drawable directories *\UnityProject\Assets\Plugins\Android\res\* with name *notify_icon_big.png*. And in the SendNotification method set bigIcon to **"notify_icon_big"**.
+Same as small icon, but use launcher icons generator (https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html)
+Just put the result into drawable directories *\UnityProject\Assets\Plugins\Android\res\* with name *notify_icon_big.png*. And in the SendNotification method set bigIcon to **"notify_icon_big"**.
 
 If you want to use app icon just set bigIcon = **"app_icon"**.
 
