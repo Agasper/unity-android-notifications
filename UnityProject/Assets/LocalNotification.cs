@@ -34,8 +34,7 @@ public class LocalNotification
         return id;
         #elif UNITY_IOS && !UNITY_EDITOR
         UnityEngine.iOS.LocalNotification notification = new UnityEngine.iOS.LocalNotification();
-        DateTime now = DateTime.Now;
-        DateTime fireDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second).AddSeconds(delayMs);
+        DateTime fireDate = DateTime.Now.AddSeconds(delayMs / 1000);
         notification.fireDate = fireDate;
         notification.alertBody = message;
         notification.alertAction = title;
