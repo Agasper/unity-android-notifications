@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.unity3d.player"
 	android:installLocation="preferExternal"
     android:versionCode="1"
@@ -27,5 +28,6 @@
         </activity>
 
         <receiver android:name="net.agasper.unitynotification.UnityNotificationManager"></receiver>
+        <receiver android:name="net.agasper.unitynotification.UnityNotificationActionHandler"></receiver>
     </application>
 </manifest>
