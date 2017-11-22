@@ -13,32 +13,55 @@ import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.AudioAttributes;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 
 import com.unity3d.player.UnityPlayer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UnityNotificationManager extends BroadcastReceiver
 {
+    private static Set<String> channels = new HashSet<>();
 
-    public static void CreateChannel(String identifier, String name, String description, int importance, int enableLights, int lightColor, int enableVibration, long[] vibrationPattern) {
+    public static void CreateChannel(String identifier, String name, String description, int importance, String soundName, int enableLights, int lightColor, int enableVibration, long[] vibrationPattern, String bundle) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O)
             return;
+
+        channels.add(identifier);
 
         NotificationManager nm = (NotificationManager) UnityPlayer.currentActivity.getSystemService(Context.NOTIFICATION_SERVICE);
         NotificationChannel channel = new NotificationChannel(identifier, name, importance);
         channel.setDescription(description);
+        if (soundName != null) {
+            Resources res = UnityPlayer.currentActivity.getResources();
+            int id = res.getIdentifier("raw/" + soundName, null, UnityPlayer.currentActivity.getPackageName());
+            AudioAttributes audioAttributes = new AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_NOTIFICATION).setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION).build();
+            channel.setSound(Uri.parse("android.resource://" + bundle + "/" + id), audioAttributes);
+        }
         channel.enableLights(enableLights == 1);
         channel.setLightColor(lightColor);
         channel.enableVibration(enableVibration == 1);
+        if (vibrationPattern == null)
+            vibrationPattern = new long[] { 1000L, 1000L };
         channel.setVibrationPattern(vibrationPattern);
         nm.createNotificationChannel(channel);
+    }
+
+    private static void createChannelIfNeeded(String identifier, String name, String soundName, boolean enableLights, boolean enableVibration, String bundle) {
+        if (channels.contains(identifier))
+            return;
+        channels.add(identifier);
+
+        CreateChannel(identifier, name, identifier + " notifications", NotificationManager.IMPORTANCE_DEFAULT, soundName, enableLights ? 1 : 0, Color.GREEN, enableVibration ? 1 : 0, null, bundle);
     }
 
     public static void SetNotification(int id, long delayMs, String title, String message, String ticker, int sound, String soundName, int vibrate,
@@ -125,15 +148,18 @@ public class UnityNotificationManager extends BroadcastReceiver
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0,
                 notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
+        if (channel == null)
+            channel = "default";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createChannelIfNeeded(channel, title, soundName, lights, vibrate, bundle);
+        }
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channel);
 
         builder.setContentIntent(pendingIntent)
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentText(message);
-
-        if (channel != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            builder.setChannelId(channel);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
             builder.setColor(color);
@@ -147,12 +173,12 @@ public class UnityNotificationManager extends BroadcastReceiver
         if (l_icon != null && l_icon.length() > 0)
             builder.setLargeIcon(BitmapFactory.decodeResource(res, res.getIdentifier(l_icon, "drawable", context.getPackageName())));
 
-
         if (sound) {
-            if (soundName != null)
-                builder.setSound(Uri.parse("android.resource://" + bundle + "/" + soundName));
-            else
-                builder.setSound(RingtoneManager.getDefaultUri(2));
+            if (soundName != null) {
+                int identifier = res.getIdentifier("raw/" + soundName, null, context.getPackageName());
+                builder.setSound(Uri.parse("android.resource://" + bundle + "/" + identifier));
+            } else
+                builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         }
 
         if (vibrate)

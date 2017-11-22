@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using UnityEngine;
 #if UNITY_IOS
 using System.Runtime.InteropServices;
@@ -18,31 +19,18 @@ public class LocalNotification
     private static string bundleIdentifier { get { return Application.bundleIdentifier; } }
 #endif
 
-    public static void CreateChannel(string identifier, string name, string description, Color32 lightColor, bool enableLights = true, Importance importance = Importance.Default, bool vibrate = true, long[] vibrationPattern = null)
-    {
-#if UNITY_ANDROID && !UNITY_EDITOR
-        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
-        if (pluginClass != null)
-        {
-            pluginClass.CallStatic("CreateChannel", identifier, name, description, (int) importance, enableLights ? 1 : 0, ToInt(lightColor), vibrate ? 1 : 0, vibrationPattern);
-        }
-#else
-        throw new System.NotImplementedException();
-#endif
-    }
-
-    public static int SendNotification(TimeSpan delay, string title, string message, Color32 bgColor, bool sound = true, String soundName = null, bool vibrate = true, bool lights = true, string bigIcon = "", string channel = null, params Action[] actions)
+    public static int SendNotification(TimeSpan delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
         int id = new System.Random().Next();
-        return SendNotification(id, (long)delay.TotalSeconds * 1000, title, message, bgColor, sound, soundName, vibrate, lights, bigIcon, channel, actions);
+        return SendNotification(id, (long)delay.TotalSeconds * 1000, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
     }
 
-    public static int SendNotification(int id, TimeSpan delay, string title, string message, Color32 bgColor, bool sound = true, String soundName = null, bool vibrate = true, bool lights = true, string bigIcon = "", string channel = null, params Action[] actions)
+    public static int SendNotification(int id, TimeSpan delay, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
-        return SendNotification(id, (long)delay.TotalSeconds * 1000, title, message, bgColor, sound, soundName, vibrate, lights, bigIcon, channel, actions);
+        return SendNotification(id, (long)delay.TotalSeconds * 1000, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
     }
 
-    public static int SendNotification(int id, long delayMs, string title, string message, Color32 bgColor, bool sound = true, String soundName = null, bool vibrate = true, bool lights = true, string bigIcon = "", string channel = null, params Action[] actions)
+    public static int SendNotification(int id, long delayMs, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
@@ -60,8 +48,6 @@ public class LocalNotification
         notification.delay = ((double) delayMs) / 1000.0;
         notification.repeat = 0;
         notification.category = channel;
-        if (channel == null)
-            notification.category = "default";
         notification.sound = sound;
         notification.soundName = soundName;
         SetActions(ref notification, actions);
@@ -72,18 +58,18 @@ public class LocalNotification
 #endif
     }
 
-    public static int SendRepeatingNotification(TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, String soundName = null, bool vibrate = true, bool lights = true, string bigIcon = "", string channel = null, params Action[] actions)
+    public static int SendRepeatingNotification(TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
         int id = new System.Random().Next();
-        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds, title, message, bgColor, sound, soundName, vibrate, lights, bigIcon, channel, actions);
+        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
     }
 
-    public static int SendRepeatingNotification(int id, TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, String soundName = null, bool vibrate = true, bool lights = true, string bigIcon = "", string channel = null, params Action[] actions)
+    public static int SendRepeatingNotification(int id, TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
-        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds, title, message, bgColor, sound, soundName, vibrate, lights, bigIcon, channel, actions);
+        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
     }
 
-    public static int SendRepeatingNotification(int id, long delayMs, long timeoutMs, string title, string message, Color32 bgColor, bool sound = true, String soundName = null, bool vibrate = true, bool lights = true, string bigIcon = "", string channel = null, params Action[] actions)
+    public static int SendRepeatingNotification(int id, long delayMs, long timeoutMs, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
 #if UNITY_ANDROID && !UNITY_EDITOR
         AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
@@ -101,8 +87,6 @@ public class LocalNotification
         notification.delay = ((double) delayMs) / 1000.0;
         notification.repeat = CalculateiOSRepeat(timeoutMs);
         notification.category = channel;
-        if (channel == null)
-            notification.category = "default";
         notification.sound = sound;
         notification.soundName = soundName;
         SetActions(ref notification, actions);
@@ -134,6 +118,19 @@ public class LocalNotification
         }
 #elif UNITY_IOS && !UNITY_EDITOR
         cancelAllNotifications();
+#endif
+    }
+
+    /// This allows you to create a custom channel for different kinds of notifications.
+    /// Channels are required on Android Oreo and above. If you don't call this method, a channel will be created for you with the configuration you give to SendNotification.
+    public static void CreateChannel(string identifier, string name, string description, Color32 lightColor, bool enableLights = true, string soundName = null, Importance importance = Importance.Default, bool vibrate = true, long[] vibrationPattern = null)
+    {
+#if UNITY_ANDROID && !UNITY_EDITOR
+        AndroidJavaClass pluginClass = new AndroidJavaClass(fullClassName);
+        if (pluginClass != null)
+        {
+            pluginClass.CallStatic("CreateChannel", identifier, name, description, (int) importance, soundName, enableLights ? 1 : 0, ToInt(lightColor), vibrate ? 1 : 0, vibrationPattern, bundleIdentifier);
+        }
 #endif
     }
 

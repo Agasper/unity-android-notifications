@@ -15,7 +15,7 @@ public class NotificationTest : MonoBehaviour
 
     public void OneTimeBigIcon()
     {
-        LocalNotification.SendNotification(1, 5000, "Title", "Long message text with big icon", new Color32(0xff, 0x44, 0x44, 255), true, null, true, true, "app_icon");
+        LocalNotification.SendNotification(1, 5000, "Title", "Long message text with big icon", new Color32(0xff, 0x44, 0x44, 255), true, true, true, "app_icon");
     }
 
     public void OneTimeWithActions()
@@ -23,12 +23,12 @@ public class NotificationTest : MonoBehaviour
         LocalNotification.Action action1 = new LocalNotification.Action("background", "In Background", this);
         action1.Foreground = false;
         LocalNotification.Action action2 = new LocalNotification.Action("foreground", "In Foreground", this);
-        LocalNotification.SendNotification(1, 5000, "Title", "Long message text with actions", new Color32(0xff, 0x44, 0x44, 255), true, null, true, true, null, null, action1, action2);
+        LocalNotification.SendNotification(1, 5000, "Title", "Long message text with actions", new Color32(0xff, 0x44, 0x44, 255), true, true, true, null, "boing", "default", action1, action2);
     }
 
     public void Repeating()
     {
-        LocalNotification.SendRepeatingNotification(1, 5000, 5000, "Title", "Long message text", new Color32(0xff, 0x44, 0x44, 255));
+        LocalNotification.SendRepeatingNotification(1, 5000, 60000, "Title", "Long message text", new Color32(0xff, 0x44, 0x44, 255));
     }
 
     public void Stop()

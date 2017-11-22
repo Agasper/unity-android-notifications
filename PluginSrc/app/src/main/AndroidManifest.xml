@@ -10,6 +10,7 @@
         android:theme="@style/AppTheme">
 
         <receiver android:name="net.agasper.unitynotification.UnityNotificationManager"></receiver>
+        <receiver android:name="net.agasper.unitynotification.UnityNotificationActionHandler"></receiver>
     </application>
 
 </manifest>
