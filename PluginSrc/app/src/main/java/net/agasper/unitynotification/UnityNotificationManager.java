@@ -56,6 +56,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         nm.createNotificationChannel(channel);
     }
 
+    @TargetApi(24)
     private static void createChannelIfNeeded(String identifier, String name, String soundName, boolean enableLights, boolean enableVibration, String bundle) {
         if (channels.contains(identifier))
             return;
