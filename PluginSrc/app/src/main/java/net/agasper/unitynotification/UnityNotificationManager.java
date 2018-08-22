@@ -129,7 +129,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         Bundle b = new Bundle();
         b.putParcelableArrayList("actions", actions);
         intent.putExtra("actionsBundle", b);
-        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayMs, rep, PendingIntent.getBroadcast(currentActivity, id, intent, 0));
+        am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + delayMs, rep, PendingIntent.getBroadcast(currentActivity, id, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     }
 
     public void onReceive(Context context, Intent intent)
