@@ -61,12 +61,12 @@ public class LocalNotification
     public static int SendRepeatingNotification(TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
         int id = new System.Random().Next();
-        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
+        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds * 1000, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
     }
 
     public static int SendRepeatingNotification(int id, TimeSpan delay, TimeSpan timeout, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
     {
-        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
+        return SendRepeatingNotification(id, (long)delay.TotalSeconds * 1000, (int)timeout.TotalSeconds * 1000, title, message, bgColor, sound, vibrate, lights, bigIcon, soundName, channel, actions);
     }
 
     public static int SendRepeatingNotification(int id, long delayMs, long timeoutMs, string title, string message, Color32 bgColor, bool sound = true, bool vibrate = true, bool lights = true, string bigIcon = "", String soundName = null, string channel = "default", params Action[] actions)
