@@ -209,7 +209,7 @@ public class UnityNotificationManager extends BroadcastReceiver
                 int icon = 0;
                 if (action.getIcon() != null && action.getIcon().length() > 0)
                     icon = res.getIdentifier(action.getIcon(), "drawable", context.getPackageName());
-                builder.addAction(icon, action.getTitle(), buildActionIntent(action, i));
+                builder.addAction(icon, action.getTitle(), buildActionIntent(action, i, context));
             }
         }
 
@@ -217,15 +217,14 @@ public class UnityNotificationManager extends BroadcastReceiver
         notificationManager.notify(id, notification);
     }
 
-    private static PendingIntent buildActionIntent(NotificationAction action, int id) {
-        Activity currentActivity = UnityPlayer.currentActivity;
-        Intent intent = new Intent(currentActivity, UnityNotificationActionHandler.class);
+    private static PendingIntent buildActionIntent(NotificationAction action, int id,Context context) {
+        Intent intent = new Intent(context, UnityNotificationActionHandler.class);
         intent.putExtra("id", id);
         intent.putExtra("gameObject", action.getGameObject());
         intent.putExtra("handlerMethod", action.getHandlerMethod());
         intent.putExtra("actionId", action.getIdentifier());
         intent.putExtra("foreground", action.isForeground());
-        return PendingIntent.getBroadcast(currentActivity, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getBroadcast(context, id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static void CancelPendingNotification(int id)
