@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
+import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
 
@@ -151,7 +152,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         String channel = intent.getStringExtra("channel");
         Bundle b = intent.getBundleExtra("actionsBundle");
         ArrayList<NotificationAction> actions = null;
-        if (b != null) {
+        if (b != null && b.containsKey("actions")) {
             actions = b.getParcelableArrayList("actions");
         }
 
