@@ -151,7 +151,7 @@ public class UnityNotificationManager extends BroadcastReceiver
         String channel = intent.getStringExtra("channel");
         Bundle b = intent.getBundleExtra("actionsBundle");
         ArrayList<NotificationAction> actions = null;
-        if (b != null) {
+        if (b != null && b.containsKey("actions")) {
             actions = b.getParcelableArrayList("actions");
         }
 
