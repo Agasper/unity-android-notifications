@@ -22,7 +22,6 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
-import android.util.Log;
 
 import com.unity3d.player.UnityPlayer;
 
