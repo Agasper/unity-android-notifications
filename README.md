@@ -1,3 +1,8 @@
+## IMPORTANT
+If you're using Unity 2018.3+, you can setup notifications throught built-in Unity package
+https://docs.unity3d.com/Packages/com.unity.mobile.notifications@1.0/manual/index.html
+
+
 Unity3D Android notification plugin
 =====
 License: *MIT*
